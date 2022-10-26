@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block page_content %}
+
+<ul class="space-y-12 indent-8 text-4xl font-bold text-tint-400 [&_a:hover]:text-tint-500">
+  <li>
+    <h2><a href="https://linkedin.com/in/jangjunha">소개</a></h2>
+  </li>
+  <li>
+    <h2><a href="{{ get_url(path="@/blog/_index.md") }}">블로그</a></h2>
+    <div class="content"></div>
+  </li>
+</ul>
+{% endblock %}

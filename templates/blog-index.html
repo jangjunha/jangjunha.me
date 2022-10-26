@@ -1,0 +1,37 @@
+{% extends "blog-base.html" %} {% block meta %}
+<link rel="stylesheet" href="/assets/blog-index.css" />
+{% endblock %}{% block page_content %}
+
+<div class="w-full">
+  {% for post in paginator.pages %}
+  <article class="w-full border-b border-tint-200 flex">
+    <a class="flex-1 px-5 py-8 hover:bg-tint-100" href="{{ post.permalink }}">
+      <h1 class="text-3xl font-bold">{{ post.title }}</h2>
+      <div class="">
+        <div class="">
+          <span class="h">posted on</span> {{ post.date }}
+        </div>
+        <div class="">
+          {% if page.taxonomies %}
+          <!-- TODO: macro -->
+          <ul class="">
+            {%- for tag in post.taxonomies.tags %}
+            <li><span class="hashmark">#</span>{{ tag }}</li>
+            {%- endfor %}
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+    </a>
+  </article>
+  {% endfor %}
+</div>
+<nav class="pagination">
+  {% if paginator.previous %}
+  <a class="previous" href="{{ paginator.previous }}">‹ Previous</a>
+  {% endif %} {% if paginator.next %}
+  <a class="next" href="{{ paginator.next }}">Next ›</a>
+  {% endif %}
+</nav>
+
+{% endblock %}

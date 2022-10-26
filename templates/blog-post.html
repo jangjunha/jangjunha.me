@@ -1,0 +1,19 @@
+{% extends "blog-base.html" %} {% block page_content %}
+<article class="prose md:prose-lg max-w-none prose-headings:flex prose-headings:items-center">
+  <header class="mb-16">
+    <h1 class="mb-4">{{ page.title }}</h2>
+    <div class="text-tint-500">
+      <time datetime="{{ page.date }}">{{ page.date | date(format="%Y년 %m월 %d일") }}</time> 발행
+      {% if page.taxonomies %}
+      <ul class="not-prose list-hashtag list-inside ml-4 m-0 pl-0 inline-flex gap-1.5">
+        {%- for tag in page.taxonomies.tags %}
+        <li><a class="" href="{{ get_taxonomy_url(kind="tags", name=tag, required=true) }}">{{ tag }}</a></li>
+        {%- endfor %}
+      </ul>
+      {% endif %}
+  </div>
+  </header>
+
+  {{ page.content | safe }}
+</article>
+{% endblock %}

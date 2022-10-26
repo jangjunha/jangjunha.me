@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}jangjunha.me{% endblock %}</title>
+    <link rel="stylesheet" href="/assets/tailwind.dist.css" />
+    {% block meta %}{% endblock %}
+    <!-- TODO: analytics -->
+  </head>
+  <body class="bg-tint-200">
+    <div class="bg-white">
+      <div class="container max-w-screen-md mx-auto px-4 py-10">
+        <h1 class="mb-8 text-2xl text-tint-500 [&_a:hover]:text-tint-600">
+          {% block page_title %}<a href="/">jangjunha</a>{% endblock %}
+        </h1>
+        {% block page_content %}{% endblock %}
+      </div>
+    </div>
+
+    <footer class="flex w-fit mx-auto py-16 text-tint-500">
+      <p class="after:content-['\_\_'] after:text-tint-400 after:mx-4">
+        &copy; <span style="font-weight: 600">jangjunha</span>
+      </p>
+      <nav class="">
+        <ul
+          class="inline-flex [&>li]:flex after:[&>li:not(:last-child)]:content-['/'] after:[&>li]:text-tint-400 after:[&>li]:mx-4"
+        >
+          <li>
+            <a href="/">첫화면</a>
+          </li>
+          <li>
+            <a href="">소개</a>
+          </li>
+
+          <li>
+            <a href="">프로젝트</a>
+          </li>
+
+          <li>
+            <a href="{{ get_url(path="@/blog/_index.md") }}">블로그</a>
+          </li>
+        </ul>
+      </nav>
+    </footer>
+  </body>
+
+  {% block lazy_loading %}{% endblock %}
+</html>
