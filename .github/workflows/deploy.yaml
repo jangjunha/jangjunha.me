@@ -62,7 +62,24 @@ jobs:
         run: zola build
 
       - name: Upload built site
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-pages-artifact@v1
         with:
-          name: public 
-          path: /public
+          path: public
+          retention-days: 7
+
+  deploy:
+    needs: build
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
