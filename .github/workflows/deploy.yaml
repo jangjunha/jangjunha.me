@@ -61,3 +61,8 @@ jobs:
       - name: Build
         run: zola build
 
+      - name: Upload built site
+        uses: actions/upload-artifact@v3
+        with:
+          name: public 
+          path: /public
