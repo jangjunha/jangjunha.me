@@ -5,6 +5,9 @@ date = "2017-06-28"
 
 [taxonomies]
 tags = ["flask", "deployment"]
+
+[extra]
+featured = true
 +++
 
 선린인터넷고등학교 Python Web framework 소수전공을 진행하면서 시간이 부족해 다루지 못했던 배포 파트를 정리해두었던 문서입니다.
