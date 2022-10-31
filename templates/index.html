@@ -1,13 +1,22 @@
+{% import "blog-macro.html" as blog_macros %}
+
 {% extends "base.html" %}
 {% block page_content %}
 
-<ul class="space-y-12 indent-8 text-4xl font-bold text-tint-400 [&_a:hover]:text-tint-500">
+<ul class="ml-8 space-y-12 [&>li>h2]:text-4xl [&>li>h2]:font-bold [&>li>h2]:text-tint-400 [&>li>h2>a:hover]:text-tint-500">
   <li>
     <h2><a href="https://linkedin.com/in/jangjunha">소개</a></h2>
   </li>
   <li>
     <h2><a href="{{ get_url(path="@/blog/_index.md") }}">블로그</a></h2>
-    <div class="content"></div>
+    <div class="mt-2">
+      {% set blog = get_section(path="blog/_index.md") %}
+      {% set posts = blog.pages | filter(attribute="extra.featured", value=true) | slice(end=2) %}
+      {{ blog_macros::render_list(posts=posts) }}
+      <div class="text-right px-5 py-2">
+        <a class="text-tint-500 hover:text-tint-600" href="{{ get_url(path="@/blog/_index.md") }}">더 보러가기..</a>
+      </div>
+    </div>
   </li>
 </ul>
 {% endblock %}
