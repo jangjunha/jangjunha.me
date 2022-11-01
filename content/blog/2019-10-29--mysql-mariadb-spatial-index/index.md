@@ -1,5 +1,6 @@
 +++
 title = "MySQL / MariaDB 공간 검색"
+description = "MySQL 또는 MariaDB에서 공간 검색을 위한 인덱스를 만들고 이를 활용하여 쿼리하는 방법을 알아봅니다."
 slug = "mysql-mariadb-spatial-index"
 date = "2019-10-29"
 

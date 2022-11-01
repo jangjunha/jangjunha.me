@@ -1,5 +1,6 @@
 +++
 title = "Create GCP billing account without assign organization"
+description = "I'm having an issue where I can't unselect an organization when creating a new project in the GCP Console. Find a workaround for this problem."
 slug = "create-gcp-billing-account-without-assign-organization"
 date = "2022-07-24"
 

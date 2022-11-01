@@ -1,5 +1,6 @@
 +++
 title = "Let' Swift 17 세션 노트"
+description = "Let' Swift 17 컨퍼런스를 들으면서 간딘히 적어둔 메모입니다."
 slug = "let-swift-17-notes"
 date = "2017-09-24"
 

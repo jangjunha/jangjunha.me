@@ -1,5 +1,6 @@
 +++
 title = "Flask 애플리케이션 배포 A to Z"
+description = "Flask 애플리케이션을 가상머신 위에서 실제 서비스처럼 구동시키는 방법을 알아봅니다."
 slug = "flask-deployment"
 date = "2017-06-28"
 
