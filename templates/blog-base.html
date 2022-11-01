@@ -1,5 +1,4 @@
-{% extends "base.html" %} {% block title %}{{ super() }} blog{% endblock %} {%
-block meta %}
-<link rel="stylesheet" href="/assets/blog.css" />
-{% endblock %} {% block page_title %}{{ super() }} <a href="{{ get_url(path="@/blog/_index.md") }}">블로그</a>{%
+{% extends "base.html" %}
+{% block title %}{{ super() }} blog{% endblock %}
+{% block page_title %}{{ super() }} <a href="{{ get_url(path="@/blog/_index.md") }}">블로그</a>{%
 endblock %}
