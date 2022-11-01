@@ -7,14 +7,14 @@ page_content %} {{ macros::render_list(posts=paginator.pages) }}
 >
   <a
     href="{% if paginator.previous %}{{ paginator.previous }}{% else %}#{% endif %}"
-    class="text-tint-500 {% if paginator.previous %} hover:text-tint-600 {% else %} opacity-25 cursor-not-allowed{% endif %}"
+    class="{% if paginator.previous %} hover:text-tint-600 {% else %} opacity-25 cursor-not-allowed{% endif %}"
     >‹ 이전 페이지</a
   >
   <p>{{ paginator.current_index }}/{{ paginator.number_pagers }} 페이지</p>
   {% if paginator.next %}{% endif %}
   <a
     href="{% if paginator.next %}{{ paginator.next }}{% else %}#{% endif %}"
-    class="text-tint-500 {% if paginator.next %} hover:text-tint-600 {% else %} opacity-25 cursor-not-allowed{% endif %}"
+    class="{% if paginator.next %} hover:text-tint-600 {% else %} opacity-25 cursor-not-allowed{% endif %}"
     >다음 페이지 ›</a
   >
 </nav>
