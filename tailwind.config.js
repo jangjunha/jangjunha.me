@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./content/**/*.html", "./templates/**/*.html"],
+  content: ["./content/**/*.{html,md}", "./templates/**/*.html"],
   theme: {
     listStyleType: {
       hashtag: '"#"',
