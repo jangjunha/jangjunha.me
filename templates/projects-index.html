@@ -1,0 +1,13 @@
+{% extends "projects-base.html" %} {% block page_content %}
+<main class="prose">
+  <ul>
+    {% for page in section.pages | reverse %}
+    <li>
+      <a href="{{ page.permalink }}"
+        ><span>{{ page.extra.year }}</span> {{ page.title }}</a
+      >
+    </li>
+    {% endfor %}
+  </ul>
+</main>
+{% endblock %}
