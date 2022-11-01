@@ -1,7 +1,7 @@
 {% macro render_tags(tags, link=false) %}
-<ul class="list-none list-inside ml-4 m-0 pl-0 inline-flex gap-1.5">
+<ul class="block sm:inline sm:ml-4 list-none list-inside m-0 pl-0 gap-1.5">
   {%- for tag in tags %}
-  <li>
+  <li class="inline">
     {% if link %}<a href="{{ get_taxonomy_url(kind="tags", name=tag, required=true) }}">{% endif %}
       <span class="mr-0.5 opacity-50">#</span>{{ tag }}
     {% if link %}</a>{% endif %}
