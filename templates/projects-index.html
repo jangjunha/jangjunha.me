@@ -6,11 +6,11 @@
     <h3>{{ year }}</h3>
     {% for page in pages %}
     <article
-      class="flex gap-x-4 items-start justify-between mt-8 [&:first-of-type]:mt-0"
+      class="flex flex-col sm:flex-row gap-4 items-start justify-between mt-8 [&:first-of-type]:mt-0"
     >
       <header class="flex-auto">
-        <div>
-          <h4 class="inline mt-0">
+        <div class="flex flex-wrap items-baseline gap-x-2">
+          <h4 class="mt-0">
             <a href="{{ page.permalink }}" class="font-bold"
               >{{ page.title }}</a
             >
@@ -20,7 +20,7 @@
             href="{{ link.url }}"
             target="_blank"
             rel="noopener noreferrer"
-            class="ml-2 first-of-type:ml-4 no-underline bg-tint-200 text-tint-800 font-normal text-sm px-2 py-0.5 rounded{% if link.broken %} bg-gray-200 text-gray-400 cursor-not-allowed{% endif %}"
+            class="no-underline bg-tint-200 text-tint-800 font-normal text-sm px-2 py-0.5 rounded{% if link.broken %} bg-gray-200 text-gray-400 cursor-not-allowed{% endif %}"
             >{{ link.name }}</a
           >
           {% endfor %} {% endif %}
@@ -29,10 +29,10 @@
       </header>
       {% if page.extra.cover %} {% set cover_src = [page.path, page.extra.cover]
       | join(sep='') | safe %} {% set thumbnail = resize_image(path=cover_src,
-      width=320, op='fit_width') %}
+      width=480, op='fit_width') %}
       <img
         src="{{ thumbnail.url }}"
-        class="rounded-lg border border-tint-200 object-cover object-top w-72 aspect-[16/9] my-0"
+        class="rounded-lg border border-tint-200 object-cover object-top self-center w-80 sm:w-72 aspect-[16/9] my-0"
       />
       {% endif %}
     </article>
