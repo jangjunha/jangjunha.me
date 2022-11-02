@@ -1,4 +1,16 @@
-{% extends "projects-base.html" %} {% block page_content %}
+{% extends "projects-base.html" %}
+
+{%- block meta -%}
+{{ super() }}
+<meta property="og:title" content="{{ page.title }}" />
+<meta property="og:description" content="{{ page.description }}" />
+{%- if page.extra.cover %}
+{%- set cover_src = get_url(path=[page.path, page.extra.cover] | join(sep='')) %}
+<meta property="og:image" content="{{ cover_src | safe }}" />
+{%- endif %}
+{%- endblock %}
+
+{% block page_content %}
 <article class="prose">
   <header>
     <p>

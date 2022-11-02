@@ -2,11 +2,13 @@
 
 {% extends "blog-base.html" %}
 
-{% block meta %}
-{% if page.description %}
+{%- block meta %}
+{{ super() }}
+<meta property="og:title" content="{{ page.title }}" />
+{%- if page.description %}
 <meta name="description" content="{{ page.description }}" />
-{% endif %}
-{% endblock %}
+{%- endif %}
+{%- endblock %}
 
 {% block page_content %}
 <article
