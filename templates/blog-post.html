@@ -6,6 +6,7 @@
 {{ super() }}
 <meta property="og:title" content="{{ page.title }}" />
 {%- if page.description %}
+<meta name="og:description" content="{{ page.description }}" />
 <meta name="description" content="{{ page.description }}" />
 {%- endif %}
 {%- endblock %}
