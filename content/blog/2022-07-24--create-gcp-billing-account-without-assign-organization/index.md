@@ -57,6 +57,6 @@ After execute the command, a billing account will be created and you will be abl
 
 In my case, I haven't been able to see the newly created account in the list yet. However, I was able to directly access the newly created account through the following address:
 
-[https://console.cloud.google.com/billing/&lt;BILLING-ACCOUNT-ID&gt;/]([https://console.cloud.google.com/billing/%3CBILLING-ACCOUNT-ID%3E/])
+[https://console.cloud.google.com/billing/&lt;BILLING-ACCOUNT-ID&gt;/](https://console.cloud.google.com/billing/%3CBILLING-ACCOUNT-ID%3E/)
 
 When you open the page, you can set up your billing account. After setup, I was able to use my billing account normally.
