@@ -3,7 +3,7 @@
   <header>
     <p>
         <h1 class="inline">{{ page.title }}</h1>
-        <span class="inline ml-2 font-normal text-lg">__ {{ page.extra.year }}</span>
+        <span class="inline ml-2 font-normal text-lg">__ {{ page.extra.year_begin }}{% if page.extra.year_end %} - {{ page.extra.year_end }}{% endif %}</span>
     </p>
     <p>{{ page.description }}</p>
   </header>

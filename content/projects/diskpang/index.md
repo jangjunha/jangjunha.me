@@ -1,11 +1,16 @@
 +++
 title = "둥글레팡"
-description = "탑뷰 기반의 맵을 PC화면으로 보고 스마트폰 기울기센서를 이용하여 캐릭터를 조작하며 즐기는 멀티플레이 게임"
+description = "PC 화면으로 탑뷰 기반의 맵을 보면서 스마트폰 기울기 센서로 캐릭터를 조작하는 멀티플레이 게임"
 
 weight = 201301
 
 [extra]
-year = 2013
+year_begin = 2013
+links = [
+    { name="Play Store (컨트롤러)", url="https://play.google.com/store/apps/details?id=com.modupost.diskpang", broken=true },
+]
+
+cover = "diskpang_pc_2.png"
 +++
 
 네트워크 통신 및 안드로이드 컨트롤러 담당
@@ -15,7 +20,7 @@ year = 2013
 - JAVA
 - JAVA NIO.2
 
-### Android Controller [Play Store](https://play.google.com/store/apps/details?id=com.modupost.diskpang)
+### Android Controller [Play Store (중단)](https://play.google.com/store/apps/details?id=com.modupost.diskpang)
 
 - Java
 

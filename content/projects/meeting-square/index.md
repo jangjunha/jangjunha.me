@@ -5,7 +5,10 @@ description = "시간과 날짜를 투표를 통해서 한번에 약속을 잡�
 weight = 201302
 
 [extra]
-year = 2013
+year_begin = 2013
+links = [
+    { name="웹사이트", url="https://meetingsquare.kr", broken=true },
+]
 +++
 
 Web frontend 담당

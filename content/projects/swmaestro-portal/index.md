@@ -5,7 +5,11 @@ description = "소프트웨어 마에스트로 멘티·멘토, 강의, 과제 �
 weight = 201602
 
 [extra]
-year = 2016
+year_begin = 2016
+links = [
+    { name="GitHub (서버)", url="https://github.com/swmaestro-portal/smp-server/" },
+    { name="GitHub (웹)", url="https://github.com/swmaestro-portal/smp-client/" },
+]
 +++
 
 소프트웨어 마에스트로 과정 1차 프로젝트

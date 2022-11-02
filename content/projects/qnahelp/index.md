@@ -1,11 +1,17 @@
 +++
 title = "문답 도우미"
-description = "당시 SNS에서 유행하던 '문답'을 편리하게 할 수 있도록 돕는 안드로이드 앱. 2012년 9월 출시 / 15,000 DL"
+description = "SNS에서 유행하던 '문답'을 일일히 복붙해서 수정하지 않고 편리하게 할 수 있도록 돕는 안드로이드 앱. 2012년 9월 출시 / 15k DL"
 
 weight = 201201
 
 [extra]
-year = 2012
+year_begin = 2012
+links = [
+    { name="Play Store", url="https://play.google.com/store/apps/details?id=jangJunha.qna_helper" },
+    { name="웹사이트", url="http://qnahelp.cafe24.com" },
+]
+
+cover = "qnahelp_android_1.png"
 +++
 
 [Website](http://qnahelp.cafe24.com) [Play Store](https://play.google.com/store/apps/details?id=jangJunha.qna_helper)

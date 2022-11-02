@@ -1,11 +1,16 @@
 +++
 title = "쨖쨔ㄲ"
-description = "HTML5기반 웹에서 박수로 플레이하는 리듬게임. Google HackFair 2015 전시"
+description = "HTML5기반 웹에서 박수소리로 플레이하는 리듬게임. Google HackFair 2015 전시"
 
 weight = 201501
 
 [extra]
-year = 2015
+year_begin = 2015
+links = [
+    { name="웹사이트", url="https://clap.heek.kr" },
+]
+
+cover = "claprythm_web_3.png"
 +++
 
 [Website](https://clap.heek.kr)
