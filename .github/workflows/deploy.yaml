@@ -25,7 +25,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: static/assets/tailwind.dist.css
-          key: ${{ env.tailwind_cli_url }}-${{ hashFiles('static/assets/tailwind.src.css', 'content/**/*.html', 'templates/**/*.html') }}
+          key: ${{ env.tailwind_cli_url }}-${{ hashFiles('static/assets/tailwind.src.css', 'content/**/*.html', 'content/**/*.md', 'templates/**/*.html') }}
 
       - name: Install Tailwind CLI
         if: steps.cache-tailwind-css.outputs.cache-hit != 'true'
