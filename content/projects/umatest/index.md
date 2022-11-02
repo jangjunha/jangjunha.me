@@ -9,6 +9,7 @@ year_begin = 2022
 links = [
     { name="웹사이트", url="https://umatest.web.app/" }
 ]
+cover = "cover-2.png"
 +++
 
 누적 플레이 횟수 33k
@@ -26,3 +27,9 @@ links = [
 
 - Python
 - Google Apps Script
+
+<div class="[&_img]:max-h-[48rem] [&_img]:shadow-lg">
+{{ figure(src="./home.png", caption="첫 화면") }}
+{{ figure(src="./q12-p.png", caption="테스트 화면") }}
+{{ figure(src="./result.png", caption="결과 화면") }}
+</div>
