@@ -22,10 +22,21 @@
         >{{ page.date | date(format="%Y년 %-m월 %-d일") }}</time
       >
       발행 {% if page.taxonomies %} {{
-      macros::render_tags(tags=page.taxonomies.tags) }} {% endif %}
+      macros::render_tags(tags=page.taxonomies.tags, link=true) }} {% endif %}
     </div>
   </header>
 
   {{ page.content | safe }}
 </article>
+
+<div class="mt-8">
+  <script
+    src="https://utteranc.es/client.js"
+    repo="jangjunha/comments.jangjunha.me"
+    issue-term="pathname"
+    theme="github-light"
+    crossorigin="anonymous"
+    async
+  ></script>
+</div>
 {% endblock %}
