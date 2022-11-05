@@ -3,7 +3,7 @@ base_url = "https://jangjunha.me"
 
 title = "jangjunha"
 
-# Whether to automatically compile all Sass files in the sass directory
+minify_html = true
 compile_sass = true
 
 # Whether to build a search index to be used later on by a JavaScript library
