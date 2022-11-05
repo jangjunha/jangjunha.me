@@ -117,6 +117,7 @@ Firestore에 대한 설명은 이만하고 다시 HeekTime 스키마로 돌아�
 <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 <script type="text/javascript">
+// TODO: React production으로
 const container = document.querySelector('#explorer');
 const root = ReactDOM.createRoot(container);
 const e = React.createElement;
@@ -404,5 +405,7 @@ root.render(e(Explorer));
 </aside>
 
 이제 웹사이트를 옮겨 볼 준비를 마쳤습니다. 다음 글에서는 웹사이트가 기존 서버에 HTTP 요청을 날리는 대신 Firestore SDK를 사용해도록 변경해보고 문제없이 작동하는지 확인해보도록 하겠습니다.
+
+{{ make_service_sleeping_list() }}
 
 [cloud firestore 문서]: https://firebase.google.com/docs/firestore?hl=en
