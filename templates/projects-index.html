@@ -1,5 +1,10 @@
 {% extends "projects-base.html" %} {% block page_content %}
 <main class="prose max-w-full">
+  <p class="mb-16">
+    취미로 했던 사이드프로젝트부터 회사에서 업무로 담당했던 제품까지, 여태껏
+    만들었던 것들을 모아두는 공간입니다.
+  </p>
+
   {% for year, pages in section.pages | reverse |
   group_by(attribute="extra.year_begin") %}
   <section>
