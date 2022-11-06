@@ -108,25 +108,24 @@ Firestore는 문서 기반의 NoSQL 데이터베이스입니다. Firestore 데�
 
 그리고 문서 아래에는 다시 하위 컬렉션이 있을 수 있고 그 아래에는 다시 하위 문서를 둘 수 있습니다. 관계형 DB는 아니지만 이처럼 부모-자식 관계는 존재합니다. 컬렉션의 자식은 항상 문서이고, 문서의 부모는 항상 컬렉션입니다. 경로로 살펴보면 `/컬렉션/문서/컬렉션/문서`와 같은 형태로 컬렉션과 문서가 교차로 나타납니다.
 
-Firestore에 대한 설명은 이만하고 다시 HeekTime 스키마로 돌아가보겠습니다. Firestore에 대한 보다 자세한 설명을 원하시면 [Cloud Firestore 문서](cloud firestore 문서)를 참고해주세요. 아래에 각 컬렉션에 속한 예시 문서를 하나씩 나타냈습니다. 경로에서 <strong class="bg-tint-200">파란색으로 하이라이팅</strong> 해둔 부분은 문서 ID입니다.
-
-<!--
+Firestore에 대한 설명은 이만하고 다시 HeekTime 스키마로 돌아가보겠습니다. Firestore에 대한 보다 자세한 설명을 원하시면 [Cloud Firestore 문서](cloud firestore 문서)를 참고해주세요. 아래에 Firestore로 저장한 HeekTime 데이터를 간단한 탐색기를 통해 볼 수 있게 해두었습니다. 데이터도 아주 조금 더 넣어두었습니다. 위에서 예시로 들었던 시간표는 `/users/c96c5ddff0da/timetables/7b8a38af69bf` 경로에 있으니 참고해주세요.
 
 <div id="explorer" class="not-prose"></div>
 
-<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script type="text/javascript">
-// TODO: React production으로
 const container = document.querySelector('#explorer');
 const root = ReactDOM.createRoot(container);
 const e = React.createElement;
 const useState = React.useState;
+const useCallback = React.useCallback;
+const useMemo = React.useMemo;
 const database = {
 	collections: {
 		users: {
 			c96c5ddff0da: {
-				content: {
+				data: {
 					username: ["jangjunha", "string"],
 					createdAt: ["2022-09-17T02:34+09:00", "timestamp"],
 					updatedAt: ["2022-09-17T02:34+09:00", "timestamp"],
@@ -134,21 +133,21 @@ const database = {
 				collections: {
 					timetables: {
 						"7b8a38af69bf": {
-							content: {
+							data: {
 								title: ["1교시엔 잠을자자", "string"],
 								semester: ["/schools/고려대학교-서울/semesters/2022-0900", "reference"],
 								createdAt: ["2022-09-17T02:34+09:00", "timestamp"],
 								updatedAt: ["2022-09-17T02:34+09:00", "timestamp"],
 							},
 							collections: {
-								timetables: {
+								lectures: {
 									"62a81f025dd4": {
-										content: {
+										data: {
 											identifier: ["COSE372", "string"],
 											title: ["데이터베이스시스템", "string"],
 											professor: ["정연돈", "string"],
 											credit: ["3", "number"],
-											category: [["정보대학", "string"], ["컴퓨터학과", "string"], "array"],
+											category: [[["정보대학", "string"], ["컴퓨터학과", "string"]], "array"],
 											times: [[
 												[{
 													weekday: [0, "number"],
@@ -167,25 +166,145 @@ const database = {
 											updatedAt: ["2022-09-17T02:34+09:00", "timestamp"],
 										},
 									},
+									"0128d5638268": {
+										data: {
+											identifier: ["COSE474", "string"],
+											title: ["전산학특강", "string"],
+											professor: ["정원기", "string"],
+											credit: ["3", "number"],
+											category: [[["정보대학", "string"], ["컴퓨터학과", "string"]], "array"],
+											times: [[
+												[{
+													weekday: [0, "number"],
+													timeBegin: [840, "number"],
+													timeEnd: [915, "number"],
+													room: ["정보관 B101", "string"],
+												}, "map"],
+												[{
+													weekday: [2, "number"],
+													timeBegin: [840, "number"],
+													timeEnd: [915, "number"],
+													room: ["정보관 B101", "string"],
+												}, "map"],
+											], "array"],
+											createdAt: ["2022-09-17T02:49+09:00", "timestamp"],
+											updatedAt: ["2022-09-17T02:49+09:00", "timestamp"],
+										},
+									},
+								},
+							},
+						},
+						"8d2e6cdc9a4b": {
+							data: {
+								title: ["시간표 2안", "string"],
+								semester: ["/schools/고려대학교-서울/semesters/2022-0900", "reference"],
+								createdAt: ["2022-09-17T03:00+09:00", "timestamp"],
+								updatedAt: ["2022-09-17T02:00+09:00", "timestamp"],
+							},
+							collections: {
+								lectures: {
+									"b6667a9063df": {
+										data: {
+											identifier: ["KECE456", "string"],
+											title: ["코드및시스템최적화", "string"],
+											professor: ["김선욱", "string"],
+											credit: ["3", "number"],
+											category: [[["공과대학", "string"], ["전기전자공학부", "string"]], "array"],
+											times: [[
+												[{
+													weekday: [0, "number"],
+													timeBegin: [630, "number"],
+													timeEnd: [705, "number"],
+													room: ["공학관 366", "string"],
+												}, "map"],
+												[{
+													weekday: [2, "number"],
+													timeBegin: [630, "number"],
+													timeEnd: [705, "number"],
+													room: ["공학관 366", "string"],
+												}, "map"],
+											], "array"],
+											createdAt: ["2022-09-17T03:10+09:00", "timestamp"],
+											updatedAt: ["2022-09-17T03:10+09:00", "timestamp"],
+										},
+									},
+									"0128d5638268": {
+										data: {
+											identifier: ["COSE474", "string"],
+											title: ["전산학특강", "string"],
+											professor: ["정원기", "string"],
+											credit: ["3", "number"],
+											category: [[["정보대학", "string"], ["컴퓨터학과", "string"]], "array"],
+											times: [[
+												[{
+													weekday: [0, "number"],
+													timeBegin: [840, "number"],
+													timeEnd: [915, "number"],
+													room: ["정보관 B101", "string"],
+												}, "map"],
+												[{
+													weekday: [2, "number"],
+													timeBegin: [840, "number"],
+													timeEnd: [915, "number"],
+													room: ["정보관 B101", "string"],
+												}, "map"],
+											], "array"],
+											createdAt: ["2022-09-17T03:00+09:00", "timestamp"],
+											updatedAt: ["2022-09-17T03:00+09:00", "timestamp"],
+										},
+									},
 								},
 							},
 						},
 					},
 				},
 			},
+			e2eb1e9d2e6a: {
+				data: {
+					username: ["dlwlrma", "string"],
+					createdAt: ["2022-11-06T14:38+09:00", "timestamp"],
+					updatedAt: ["2022-11-06T14:38+09:00", "timestamp"],
+				},
+				collections: {
+					timetables: {
+					},
+				},
+			},
 		},
 		schools: {
 			"고려대학교-서울": {
-				content: {
+				data: {
 					name: ["고려대학교 (서울)", "string"],
 				},
 				collections: {
 					semesters: {
 						"2022-0900": {
-							content: {
+							data: {
 								year: ["2022", "number"],
 								term: ["2학기", "string"],
-								periods: [[], "array "],
+								periods: [[
+									[{
+										period: [1, "number"],
+										timeBegin: [540, "number"],
+										timeEnd: [615, "number"],
+									}, "map"], [{
+										period: [2, "number"],
+										timeBegin: [630, "number"],
+										timeEnd: [705, "number"],
+									}, "map"], [{
+										period: [3, "number"],
+										timeBegin: [720, "number"],
+										timeEnd: [770, "number"],
+									}, "map"], [{
+										period: [4, "number"],
+										timeBegin: [780, "number"],
+										timeEnd: [830, "number"],
+									}, "map"], [{
+										period: [5, "number"],
+										timeBegin: [840, "number"],
+										timeEnd: [915, "number"],
+									}, "map"],
+								], "array"],
 								lecturesUrl: ["gs://heektime/5655b5e.json", "string"],
 							},
 						},
@@ -198,8 +317,13 @@ const database = {
 				collections: {
 					usernames: {
 						jangjunha: {
-							content: {
+							data: {
 								username: ["c96c5ddff0da", "string"],
+							},
+						},
+						dlwlrma: {
+							data: {
+								username: ["e2eb1e9d2e6a", "string"],
 							},
 						},
 					},
@@ -208,77 +332,156 @@ const database = {
 		},
 	},
 };
-const Field = ({ name, value, type }) => {
-	return e(
+const Field = ({ name, value, type }) => (
+	e(
 		"tr",
-		{ className: "flex" },
-		e("td", {}, `${name}:`),
-		e("td", {}, e(
-			"code",
-			{ className: "whitespace-pre" },
-			JSON.stringify(value, null, 4),
-			e(
-				"span",
-				{},
-				`(${type})`,
-			)
-		)),
-	);
-};
-const Document = ({ content: doc }) => {
-	return e(
-		"table",
-		{ className: "table-auto" },
-		e(
-			"tbody", {},
-			Object.entries(doc).map(([k, v]) => e(
-				Field,
-				{ key: k, name: k, value: v[0], type: v[1] },
-			))
-		),
-	);
-};
-const Column = ({ path, content, children, onClick }) => {
-	return e(
-		"div",
 		{},
-		e("div", {}, path),
-		content && e(Document, { content }),
-		e("div", {}, "collections:"),
-		e(
-			"ul",
-			{ className: "flex flex-col border" },
-			...children.map((item) => e(
-				"li",
-				{ key: item, className: "", onClick: () => onClick(item) },
-				item,
-			)),
-		),
+		e("td", { className: "flex text-slate-500 sm:break-keep" }, `${name}:`),
+		e("td", {}, e(Value, { value, type })),
+	)
+);
+const MappingElement = ({ name, value, type }) => (
+	e("tr", {},
+		e("td", { className: "flex text-slate-500 sm:break-keep" }, e("code", {}, `${name}:`)),
+		e("td", {}, e(Value, { value, type })),
+	)
+);
+const Value = ({ value, type }) => {
+	const typeTag = e(
+		"span",
+		{ className: "ml-2 text-gray-400" },
+		`(${type})`,
 	);
+	switch (type) {
+		case "string":
+		case "number":
+		case "boolean":
+		case "geopoint":
+			return e("div", { className: "flex flex-wrap" },
+				e("code", {}, JSON.stringify(value, null, 2)),
+				typeTag,
+			);
+		case "timestamp":
+		case "reference":
+			return e("div", { className: "flex flex-wrap" },
+				e("code", {}, value),
+				typeTag,
+			);
+		case "null":
+			return e("code", {}, "null");
+		case "map":
+			return e("div", { className: "" },
+				e("code", {}, "{"),
+				e(
+					"table", { className: "table-auto ml-4 sm:ml-8" },
+					e("tbody", {}, Object.entries(value).map(([name, [ev, et]]) => (
+						e(MappingElement, { key: name, name, value: ev, type: et })
+					))),
+				),
+				e("code", {}, "}"),
+				typeTag,
+			);
+		case "array":
+			return e("div", { className: "" },
+				e("code", {}, "["),
+				e(
+					"ul", { className: "ml-4 sm:ml-8" },
+					value.map(([ev, et], index) => (
+						e(Value, { key: index, value: ev, type: et })
+					)),
+				),
+				e("code", {}, "]"),
+				typeTag,
+			);
+	}
 };
+const Document = ({ data: doc }) => (
+	e(
+		"div",
+		{ className: "flex-auto" },
+		e(
+			"table",
+			{ className: "table-auto m-4" },
+			e(
+				"tbody", {},
+				Object.entries(doc).map(([k, v]) => e(
+					Field,
+					{ key: k, name: k, value: v[0], type: v[1] },
+				))
+			),
+		),
+	)
+);
+const Path = ({ path, onClick }) => (
+	e(
+		"div", { className: "flex flex-wrap border-b px-4 py-2" },
+		path.reduce((res, e) => [[e, ...res[0]], ...res], [[null]]).reverse().map((elem) => {
+			const p = elem.slice(0, -1).reverse();
+			const fullPath = "/" + p.join("/");
+			return e(
+				React.Fragment,
+				{ key: fullPath },
+				e("span", { className: "px-[0.25rem] first:pl-0 text-tint-300" }, "/"),
+				e(
+					"span", {
+						className: "underline cursor-pointer text-tint-600",
+						onClick: () => onClick(p),
+					},
+					elem[0] || "(database)",
+				),
+			);
+		}),
+	)
+);
+const Column = ({ data, type, children, onClick }) => (
+	e(
+		"div", { className: "grow flex flex-col sm:flex-row-reverse items-stretch" },
+		e("div", { className: "sm:w-[9.5rem] sm:border-l bg-slate-100 pb-2 sm:pb-0 border-b sm:border-b-0" },
+			e(
+				"div",
+				{ className: "px-2 pt-2 pb-0 text-slate-500 text-sm" },
+				type === "document" ? "하위 컬렉션" : "하위 문서",
+			),
+			children.length > 0 ? e(
+				"ul",
+				{ className: "flex flex-col border-t bg-white" },
+				...children.map((item) => e(
+					"li",
+					{ key: item, className: "border-b pl-4 pr-2 py-1 cursor-pointer hover:bg-tint-100", onClick: () => onClick(item) },
+					item,
+				)),
+			) : e("span", { className: "px-2 text-slate-300 text-sm" }, "(empty)"),
+		),
+		data ? e(Document, { data }) : e("p", { className: "grow p-4 text-slate-500" }, type === "document" ? "오른쪽 사이드바에서 하위 컬렉션을 탐색해보세요." : children.length > 0 ? "오른쪽 사이드바에서 하위 문서를 탐색해보세요." : "여기에는 하위 문서가 없습니다."),
+	)
+);
 const Explorer = () => {
 	const [path, setPath] = useState([]);
-	var res = [["document", "/", database]];
-	for (const p of path) {
-		const [currType, currPath, curr] = res[0];
-		const nextPath = `${currPath}${p}/`;
-		switch (currType) {
-		case "document":
-			res.unshift(["collection", nextPath, curr.collections[p]]);
-			break;
-		case "collection":
-			res.unshift(["document", nextPath, curr[p]]);
-			break;
-		}
-	};
-	const [lastType, lastPath, lastItem] = res[0];
-	const handleClickItem = (name) => setPath([...path, name]);
+	const last = useMemo(() => {
+		var res = [["document", [], database]];
+		for (const p of path) {
+			const [currType, currPath, curr] = res[0];
+			const nextPath = [...currPath, p];
+			switch (currType) {
+			case "document":
+				res.unshift(["collection", nextPath, curr.collections[p]]);
+				break;
+			case "collection":
+				res.unshift(["document", nextPath, curr[p]]);
+				break;
+			}
+		};
+		return res[0];
+	}, [path]);
+	const [lastType, lastPath, lastItem] = last;
+	const handleClickItem = useCallback((name) => setPath([...path, name]), [path.join("/")]);
 	return e(
 		"div",
-		{ className: "flex" },
+		{ className: "flex flex-col items-stretch min-h-[20rem] border" },
+		e(Path, { path: lastPath, onClick: setPath }),
 		e(
 			Column,
-			{ path: lastPath, content: lastItem.content, onClick: handleClickItem },
+			{ data: lastItem.data, type: lastType, onClick: handleClickItem },
 			Object.keys(lastType === "document" ? lastItem.collections || [] : lastItem),
 		),
 	);
@@ -286,7 +489,7 @@ const Explorer = () => {
 root.render(e(Explorer));
 </script>
 
--->
+<!--
 
 **School** <code>/schools/**고려대학교-서울**</code>
 
@@ -376,13 +579,13 @@ root.render(e(Explorer));
 | -------- | ------------ | ------ |
 | username | c96c5ddff0da | string |
 
-</div>
+-->
 
-몇 차례 시행착오를 거친 끝에 위와 같은 스키마로 결론지었습니다.
+</div>
 
 크게 달라진 부분은 없지만 Firestore의 구조에 알맞게 몇몇 부분을 변경했습니다. 눈여겨 볼만한 부분을 살펴볼까요?
 
-- 이제는 Lecture 문서가 Timetable 문서 하위에 있기 때문에 timetable_id를 가리키는 필드는 더이상 필요하지 않습니다.
+- 이제는 Lecture 문서가 Timetable 문서 **하위**에 있기 때문에 `timetable_id`를 가리키는 필드는 더이상 필요하지 않습니다. 마찬가지로 Timetable 문서는 User 문서 **하위**에 있기 때문에 `user_id`를 가리키는 필드도 필요하지 않습니다.
 
 - 강의시간 정보를 별도의 (LectureTime)컬렉션 대신 Lectue 문서 필드의 값으로 저장합니다.
 
@@ -390,8 +593,9 @@ root.render(e(Explorer));
 
 - 참고로 Lecture 문서의 category, times 필드는 JSON이 아닌 복합 객체 타입입니다.
 
-- username의 고유성을 보장하기 위해 Username Index 컬렉션을 추가했습니다.
-  → RDB와 달리 Firestore에서는 특정 필드에 고유성 제약조건을 걸 수 없어 다른 방법을 이용해야합니다. Firestore의 특정 컬렉션 내에서 문서 ID는 고유합니다. 이러한 특성을 이용하기 위해서 별도의 username 컬렉션을 만듭니다. 이 컬렉션과 트랜잭션을 사용해서 username의 고유성을 유지하면서 User를 생성하거나 변경할 수 있고, 보안 규칙을 사용해서 이를 강제할 수 있습니다. 보안 규칙에 대한 내용은 후속편에서 다뤄보겠습니다. <!-- 참고한 질문-답변: Brian Neisler, [https://stackoverflow.com/a/59892127](https://stackoverflow.com/a/59892127) -->
+- username의 고유성을 보장하기 위해 Username Index 컬렉션(`/indices/user/usernames`)을 새로 만들었습니다.
+
+  RDB와 달리 Firestore에서는 특정 필드에 고유 제약조건을 걸 수 없어 다른 방법을 이용해야합니다. Firestore의 특정 컬렉션 내에서 문서 ID는 고유합니다. 이러한 특성을 이용하기 위해서 별도의 username 컬렉션을 만듭니다. 이 컬렉션과 트랜잭션을 사용해서 username의 고유성을 유지하면서 User를 생성하거나 변경할 수 있고, 보안 규칙을 사용해서 이를 강제할 수 있습니다. 보안 규칙에 대한 내용은 후속편에서 다뤄보겠습니다. <!-- 참고한 질문-답변: Brian Neisler, [https://stackoverflow.com/a/59892127](https://stackoverflow.com/a/59892127) -->
 
 - User의 인증 정보는 이제 별개의 서비스(Firebase Authentication)에서 관리하기 때문에 password 해시를 여기서 저장하지 않습니다.
 
