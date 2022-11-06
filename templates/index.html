@@ -5,13 +5,13 @@
 
 <ul class="ml-0 sm:ml-8 space-y-12 [&>li>h2]:text-4xl [&>li>h2]:font-bold [&>li>h2>a:hover]:text-tint-600">
   <li>
-    <h2><a href="https://linkedin.com/in/jangjunha">소개</a></h2>
+    <h2><a href="https://linkedin.com/in/jangjunha" target="_blank" rel="noopener noreferrer">resume</a></h2>
   </li>
   <li>
-    <h2><a href="{{ get_url(path="@/projects/_index.md") }}">아카이브</a></h2>
+    <h2><a href="{{ get_url(path="@/projects/_index.md") }}">archive</a></h2>
   </li>
   <li>
-    <h2><a href="{{ get_url(path="@/blog/_index.md") }}">블로그</a></h2>
+    <h2><a href="{{ get_url(path="@/blog/_index.md") }}">blog</a></h2>
     <div class="mt-2">
       {% set blog = get_section(path="blog/_index.md") %}
       {% set posts = blog.pages | filter(attribute="extra.featured", value=true) | slice(end=2) %}
