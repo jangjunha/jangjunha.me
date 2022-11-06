@@ -1,0 +1,13 @@
+{% extends "base.html" %} {% block page_content %}
+<div class="prose">
+  <h2>태그:</h2>
+  <ul>
+    {%- for term in terms %}
+    <li>
+      <a href="{{ term.permalink }}">#{{ term.name }}</a>
+      <span class="text-stone-400">({{ term.pages | length }})</span>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
