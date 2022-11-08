@@ -1,2 +1,6 @@
 {% extends "base.html" %}
+{%- block meta -%}
+{{ super() }}
+<meta name="robots" content="noindex">
+{%- endblock -%}
 {% block page_title %}{{ super() }} <a href="{{ get_url(path="@/projects/_index.md") }}">archive</a>{% endblock %}
