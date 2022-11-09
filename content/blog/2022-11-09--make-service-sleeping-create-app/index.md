@@ -9,12 +9,13 @@ tags = ["serverless", "firebase", "firestore", "firebase-authentication", "gcp"]
 featured = true
 +++
 
-데이터를 어떻게 저장할지도 정했으니 이제 앱을 만들 차례입니다. 만들기에 앞서 School, Semester 문서는 앞서 정한 스키마에 맞추어 Firebase Console를 통해 미리 채워두었습니다.
+데이터를 어떻게 저장할지도 정했으니 이제 앱을 만들 차례입니다. 만들기에 앞서 School, Semester 문서는 이전 글에서 정한 스키마에 맞추어 Firebase
+Console를 통해 미리 채워두었습니다.
 
-원본 프로젝트의 소스코드가 [`heektime-web-v3` GitHub 저장소][heektime-web-v3 github]에 공개되어 있습니다. 글에는 Firebase 적용에 집중해서 최대한 간략하게 줄인 코드가 있으니 원본 코드가 궁금하시면 직접 저장소에서 확인하실 수 있습니다.
+원본 프로젝트의 소스코드가 [`heektime-web-v3` GitHub 저장소][heektime-web-v3 github]에 공개되어 있습니다. 글에서 소개하는 코드는 Firebase
+적용에 집중해서 최대한 간략하게 줄였으니 원본 코드가 궁금하시면 저장소에서 직접 확인해주세요.
 
-웹사이트는 React로 만들었습니다. 글에서는 다른 부분은 최대한 배제하고 Firebase와 통합하는 부분에만 집중합니다. 실제보다 단순화한 부분도 있음을 미리
-밝힙니다.
+웹사이트는 React로 만들었습니다. 글에서는 다른 부분은 최대한 배제하고 Firebase 통합에만 집중하다보니 실제보다 단순화한 부분도 있음을 미리 밝힙니다.
 
 ## 회원가입
 
@@ -22,19 +23,20 @@ featured = true
 
 사용자의 회원가입 절차는 다음 두 단계로 이루어집니다:
 
-1. Firebase 인증에 회원 정보를 만듭니다.
+1. Firebase Authentication에 **인증 정보**를 만듭니다.
 
-   [인증 정보(username, password)를 제출하여 회원가입을 마치면 UID를 반환받습니다.](https://firebase.google.com/docs/auth/web/password-auth?hl=ko#create_a_password-based_account)
+   [인증 정보(username, password)를 제출하여 회원가입을 마치면 UID를 반환받습니다.][create_a_password-based_account]
 
-2. Firestore에 회원 문서를 만듭니다.
+2. Firestore에 **User 문서**를 만듭니다.
 
-   반환받은 UID에 대한 회원 문서를 만들고 닉네임(username) 등의 프로필 정보를 저장합니다.
+   반환받은 UID에 대한 회원 문서를 만들고 닉네임(username) 등의 **프로필 정보**를 저장합니다.
 
 <aside class="bg-tint-200 px-6 rounded-3xl flex flex-row gap-4">
 <div><p>✏️</p></div>
 <div class="flex-auto">
 
-Firebase 인증에서도 사용자의 닉네임(표시 이름), 프로필 사진 같은 간단한 프로필을 관리할 수 있지만 다른 사용자의 프로필에 접근할 수 없습니다. 이 프로젝트에서는 사용자가 다른 사용자의 데이터에 접근할 수 있어야 하므로 사용자 프로필 정보를 Firestore에 저장합니다.
+Firebase Authentication에서도 사용자의 닉네임(표시 이름), 프로필 사진 같은 간단한 프로필을 관리할 수 있지만 자신이 아닌 다른 사용자의 프로필에 접근할
+수 없습니다. 이 프로젝트에서는 사용자가 다른 사용자의 데이터에 접근할 수 있어야 하므로 사용자 프로필 정보를 Firestore에 저장하도록 했습니다.
 
 </div>
 </aside>
@@ -48,7 +50,7 @@ Firebase 인증에서도 사용자의 닉네임(표시 이름), 프로필 사진
 
 </div>
 
-사용자는 “회원가입” 후 이탈(혹은 네트워크 오류)할 수 있습니다. Firebase 인증에 인증 정보를 등록했으므로 이 경우에도 사용자는 로그인 할 수 있지만 곧바로 “추가 정보 입력” 화면을 띄워서 회원가입 절차를 마치도록 할 것입니다. 그리고 사용자가 “추가 정보 입력”을 마치지 않은 상태로는 다른 기능에 접근할 수 없도록 할 것입니다.
+사용자는 “회원가입” 후 이탈(혹은 네트워크 오류)할 수 있습니다. Firebase Authentication에 인증 정보를 등록했으므로 이 경우에도 사용자는 로그인 할 수 있지만 곧바로 “추가 정보 입력” 화면을 띄워서 회원가입 절차를 마치도록 할 것입니다. 그리고 사용자가 “추가 정보 입력”을 마치지 않은 상태로는 다른 기능에 접근할 수 없도록 할 것입니다.
 
 <div class="flex gap-8 justify-center [&_img]:max-h-[480px]">
 {{ figure(src="./login.png", caption="2단계를 마치지 않은 사용자도 로그인 할 수 있습니다.", alt="이메일, 비밀번호를 입력하고 로그인 중인 화면") }}
@@ -122,10 +124,11 @@ const RegisterPage = () => {
 };
 ```
 
-Firebase 인증 회원가입은 정말 간단합니다.
-(1) Firebase 인증 SDK에서 제공하는 [`createUserWithEmailAndPassword()`][createuserwithemailandpassword] 함수를 호출하는 것이 전부입니다.
-(0) 회원가입을 마치면 context의 `authUser` 객체가 설정되는데 그러면 `CreateUserInfo` 페이지로 이동합니다.
-`_FirebaseAuthContext`는 Firebase 인증 정보를 감싼 context인데 코드는 아래에서 다시 보겠습니다.
+Firebase Authentication 회원가입은 정말 간단합니다.
+(1) Firebase Authentication SDK에서 제공하는 [`createUserWithEmailAndPassword()`][createuserwithemailandpassword] 함수를
+호출하는 것이 전부입니다.
+(0) 회원가입을 마치면 context의 `authUser` 객체가 설정되는데 그러면 `CreateUserInfo` 페이지로 이동합니다. `_FirebaseAuthContext`는
+Firebase Authentication 로그인 상태를 감싼 context인데, 코드는 밑에서 자세히 소개하겠습니다.
 
 #### `CreateUserInfoPage`
 
@@ -205,8 +208,10 @@ const CreateUserInfoPage = () => {
 
 **username 고유성 보장하기**
 
-RDB와 달리 Firestore에서는 특정 필드에 고유 제약조건을 걸 수 없습니다. 방법을 찾아보다가 stack overflow에서 [Brian Neisler님의 답변](https://stackoverflow.com/a/59892127)을 찾았습니다.
-Firestore의 특정 컬렉션 내에서 문서 ID는 고유합니다. 이러한 특성을 이용하기 위해서 별도의 username 컬렉션을 만듭니다. 이 인덱스 컬렉션과 **트랜잭션**을 사용해서 username의 고유성을 유지하면서 User를 생성하거나 변경할 수 있고, 보안 규칙을 사용해서 이를 강제할 수 있습니다. 보안 규칙에 대한 내용은 후속편에서 다뤄보겠습니다.
+RDB와 달리 Firestore에서는 특정 필드에 고유 제약조건을 걸 수 없습니다. 방법을 찾아보다가 stack overflow에서
+[Brian Neisler님의 답변](https://stackoverflow.com/a/59892127)의 해결책을 선택했습니다. Firestore의 특정 컬렉션 내에서 문서 ID는
+고유합니다. 이러한 특성을 이용하기 위해서 별도의 username 컬렉션을 만듭니다. 이 인덱스 컬렉션과 **트랜잭션**을 사용해서 username의 고유성을 유지하면서
+User를 생성하거나 변경할 수 있고, 보안 규칙을 사용해서 이를 강제할 수 있습니다. 보안 규칙에 대한 내용은 나중에 별도의 글로 나눠서 다루려고 합니다.
 
 </div>
 </aside>
@@ -446,7 +451,7 @@ const SignInPage = (): React.ReactElement => {
 };
 ```
 
-Firebase 인증 SDK에 있는 [`signInWithEmailAndPassword()`][signinwithemailandpassword]를 사용해서 간단하게 구현했습니다.
+Firebase Authentication SDK에 있는 [`signInWithEmailAndPassword()`][signinwithemailandpassword]를 사용해서 간단하게 구현했습니다.
 
 <aside class="bg-tint-200 px-6 rounded-3xl flex flex-row gap-4">
 <div><p>✏️</p></div>
@@ -455,7 +460,7 @@ Firebase 인증 SDK에 있는 [`signInWithEmailAndPassword()`][signinwithemailan
 약간 지저분한 로직은 로그인 아이디를 username에서 이메일로 변경해서 그렇습니다. 처음에 만들 때 username을 로그인 아이디로 사용하도록 하고 이메일주소를
 받지 않았는데 사용자가 비밀번호를 잊었을 때 사용자를 인증할 수 있는 수단이 없다는 문제가 있어서 로그인 아이디를 이메일주소로 바꿨습니다. 하지만 기존 사용자는
 가입할 때 이메일을 입력하지 않았으므로 계속해서 username으로 로그인 할 수 있어야 합니다. 이럴 때 임의로 `<username>@user.heektime.heek.kr`이라는
-이메일 주소를 사용하도록 처리했습니다. (그리고 Firebase 인증의 비밀번호 로그인은 사용자 아이디로 이메일만을 허용하기도 합니다.)
+이메일 주소를 사용하도록 처리했습니다. (그리고 Firebase Authentication의 비밀번호 로그인은 사용자 아이디로 이메일만을 허용하기도 합니다.)
 
 </div>
 </aside>
@@ -615,6 +620,7 @@ const useLectures = (
 {{ make_service_sleeping_list() }}
 
 [heektime-web-v3 github]: https://github.com/jangjunha/heektime-web-v3
+[create_a_password-based_account]: https://firebase.google.com/docs/auth/web/password-auth?hl=ko#create_a_password-based_account
 [firestore transactions and batched writes]: https://firebase.google.com/docs/firestore/manage-data/transactions?hl=en
 [firestore transaction serializability and isolation]: https://firebase.google.com/docs/firestore/transaction-data-contention?hl=en
 [get realtime updates with cloud firestore]: https://firebase.google.com/docs/firestore/query-data/listen?hl=en
