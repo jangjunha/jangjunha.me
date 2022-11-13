@@ -156,7 +156,7 @@ const CreateUserInfoPage = () => {
     setUsername(e.target.value);
   };
   const handleClickSubmit = async () => {
-    // `doc()` 함수로 문서를 가리키는 레퍼런스를 만들 수 있습니다.
+    // `doc()` 으로 문서를 가리키는 레퍼런스를 만들 수 있습니다.
     const userRef = doc(db, "users", authUser.uid);
     const usernameRef = doc(db, "indices", "user", "usernames", username);
 
@@ -208,24 +208,21 @@ const CreateUserInfoPage = () => {
 
 **username 고유성 보장하기**
 
-RDB와 달리 Firestore에서는 특정 필드에 고유 제약조건을 걸 수 없습니다. 방법을 찾아보다가 stack overflow에서
-[Brian Neisler님의 답변](https://stackoverflow.com/a/59892127)의 해결책을 선택했습니다. Firestore의 특정 컬렉션 내에서 문서 ID는
-고유합니다. 이러한 특성을 이용하기 위해서 별도의 username 컬렉션을 만듭니다. 이 인덱스 컬렉션과 **트랜잭션**을 사용해서 username의 고유성을 유지하면서
-User를 생성하거나 변경할 수 있고, 보안 규칙을 사용해서 이를 강제할 수 있습니다. 보안 규칙에 대한 내용은 나중에 별도의 글로 나눠서 다루려고 합니다.
+RDB와 달리 Firestore에서는 특정 필드에 고유 제약조건을 걸 수 없습니다. 대안으로
+[Brian Neisler님의 답변](https://stackoverflow.com/a/59892127)을 선택했습니다. Firestore의 특정 컬렉션 내에서 문서 ID는 고유합니다. 이러한 특성을 이용하기 위해서 별도의 username 컬렉션을 만들고 이 인덱스 컬렉션과 **트랜잭션**을 사용하면 username의 고유성을 유지하면서 User를 생성·변경할 수 있습니다. 그리고 username을 수정할 때 연관된 인덱스 컬렉션을 함께 수정하는 것을 [보안 규칙][security-rules]을 통해 강제할 수 있습니다. 보안 규칙에 대한 내용은 나중에 별도의 글로 나눠서 다루려고 합니다.
 
 </div>
 </aside>
 
 (1) 트랜잭션 안에서 사용자가 입력한 username이 이미 존재하는지 확인합니다. 그리고 (2)-1 username index 문서와 (2)-2 user 문서를 만듭니다.
 
-username index 문서 쓰기 작업은 앞서 읽은 username 인덱스 문서에 변화가 없을 경우에만 성공하며, username index 문서와 user 문서는 원자적으로 생성됩니다. 따라서 username은 고유하게 됩니다.
+뒤이어 진행하는 username index 문서 쓰기 작업은 앞서 읽은 username 인덱스 문서에 변화가 없을 경우에만 성공합니다. username index 문서와 user 문서는 원자적으로 생성되므로 일관적인 상태를 유지합니다. 따라서 username은 항상 고유하게 됩니다.
 
 만약에 username index 문서를 읽었을 때는 문서가 없었는데 username index를 쓰기 전에 다른 클라이언트가 해당 문서를 작성하면 어떻게 될까요?
 
 > The transaction completes its write operations only if none of those documents changed during the transaction's execution.
 
-Firestore 모바일/웹 라이브러리는 낙관적 동시성 제어(optimistic concurrency control) 방법을 사용합니다. 앞에서 말한 일이 일어나면 트랜잭션은
-실패하고 재시도하게됩니다. (재시도 횟수는 정해져 있습니다) 그러면 이미 문서가 있으므로 다른 사람이 사용 중인 username이라는 에러 메시지를 보게 될 것입니다.
+Firestore 모바일/웹 SDK는 낙관적 동시성 제어(optimistic concurrency control) 방법을 사용합니다. 앞에서 말한 일(충돌)이 일어나면 트랜잭션은 실패합니다. 이 경우 SDK가 자동으로 트랜잭션을 재시도합니다. 그러면 이미 문서가 있으므로 다른 사람이 사용 중인 username이라는 에러 메시지를 보게 될 것입니다. (재시도 횟수는 유한합니다. 반복하여 재시도했음에도 일정 횟수 이상 실패하면 트랜잭션은 최종 실패합니다.)
 
 Firestore에서 트랜잭션을 사용하는 더 자세한 방법은
 [〈Transactions and batched writes〉 — Firestore 문서][firestore transactions and batched writes]에, Firestore에서 트랜잭션의
@@ -233,17 +230,17 @@ Firestore에서 트랜잭션을 사용하는 더 자세한 방법은
 [〈Transaction serializability and isolation〉 — Firestore 문서][firestore transaction serializability and isolation]에 자세히
 나와있습니다.
 
-이야기가 잠시 옆길로 샜네요. 다시 회원가입 로직으로 돌아와봅시다. 트랜잭션이 성공하고 문서가 쓰였으면 `_UserDocumentContext`에 해당 유저의 문서가
-설정됩니다. 그럼 페이지 컴포넌트는 다시 렌더링될 것이고 (0)에 의해 첫 화면으로 이동하게 됩니다!
+이야기가 잠시 옆길로 샜네요. 다시 회원가입 로직으로 돌아옵시다. 트랜잭션이 성공하고 문서가 쓰였으면 `_UserDocumentContext`에 해당 유저의 문서가 설정됩니다. 그럼 페이지 컴포넌트는 다시 렌더링될 것이고 (0)에 의해 첫 화면으로 이동하게 됩니다!
 
 ## 로그인 Context
 
-이제 앞에서 넘어갔던 context들을 살펴볼 차례입니다. 회원가입 절차가 2단계로 이루어져있듯이 로그인 정보를 제공하는 context도 두 개의 저수준
-contexts(`_FirebaseAuthContext`, `_UserDocumentContext`)로 이루어져 있습니다. 두 contexts를 회원가입 절차 순서대로 살펴보겠습니다.
+이제 앞에서 넘어갔던 context들을 살펴 볼 차례입니다. 회원가입 절차가 2단계로 이루어져 있듯이 로그인 정보를 제공하는 context도 두 개의 저수준 contexts(`_FirebaseAuthContext`, `_UserDocumentContext`)로 이루어져 있습니다. 두 contexts를 회원가입 절차 순서대로 살펴보겠습니다.
 
 #### `_FirebaseAuthContext`
 
 ```tsx
+import { User as AuthUser, onAuthStateChanged } from "firebase/auth";
+
 type FirebaseAuthState = AuthUser | null;
 
 export const _FirebaseAuthContext =
@@ -266,11 +263,11 @@ export const _FirebaseAuthProvider = ({ children }) => {
 };
 ```
 
-`_FirebaseAuthContext`의 값은 (FIR Auth에) 로그인 되어 있으면 Firebase Authentication 로그인 유저 정보 `AuthUser` 객체 또는 로그아웃 상태이면 `null`입니다. 구현은 Firebase Authentication을 추상화한 것이 전부입니다. `onAuthStateChanged()`에 리스너를 등록하면 인증 상태가 바뀔 떄마다 리스너가 호출되는데 그 값을 상태로 저장하고 다시 context 값으로 사용합니다.
+`_FirebaseAuthContext`의 값은 (Firebase Authentication에) 로그인 되어 있으면 Firebase Authentication 유저 정보 [`User`][auth-user] 객체 또는 로그아웃 상태일 때 `null`입니다. 구현은 Firebase Authentication을 React context로 추상화하는 일이 전부입니다. `onAuthStateChanged()`에 리스너를 등록하면 인증 상태가 바뀔 때마다 리스너가 호출되는데 그 값을 상태로 저장하고 다시 같은 값을 context 값으로 설정합니다.
 
 #### `_UserDocumentContext`
 
-(`_FirebaseAuthContext`를 확장한) Firestore에 저장된 유저 프로필 정보를 제공하는 context입니다. `_FirebaseAuthContext`에 의존합니다.
+(`_FirebaseAuthContext`를 확장한) Firestore에 저장된 유저 프로필 정보를 제공하는 context입니다 `_FirebaseAuthContext`에 의존합니다.
 
 ```tsx
 type UserDocumentState =
@@ -329,16 +326,13 @@ export const _UserDocumentProvider = ({ children }) => {
 };
 ```
 
-(1) FIR Auth uid가 변하면 상태를 로딩 중으로 바꾸고, uid에 대한 `User` 문서를 요청합니다. (2)-1 `User` 문서를 받아오면 이를 상태에 저장합니다. (2)-2 만약에 해당 문서가 없다면 `null`로 저장합니다. 그럼 다시 상태에 따라 로그아웃됨(`logged-out`), 로그인 중(`logging-in`), 문서 없음(`not-exists`), 로그인 됨(`logged-in`) 상태로 나누어서 context 값을 제공하게 됩니다.
+(1) Firebase Authentication 로그인 상태가 변하면 상태를 로딩 중으로 바꾸고, uid에 대한 `User` 문서를 요청합니다. (2)-1 `User` 문서를 받아오면 이를 상태에 저장합니다. (2)-2 만약에 해당 문서가 없다면 `null`로 저장합니다. 그럼 다시 상태에 따라 로그아웃됨(`logged-out`), 로그인 중(`logging-in`), 문서 없음(`not-exists`), 로그인 됨(`logged-in`) 상태로 나누어서 context 값을 설정하게 됩니다.
 
-대부분의 페이지에서는 이 context를 다시 추상화한 `LoginContext`를 사용하게 되고(사용해야만 하고), 좀 더 자세한 로그인 상태가 필요한 회원가입, 로그인 페이지 등에서는 저수준의 `_FirebaseAuthContext`나 `_UserDocumentContext`를 직접 사용하게 됩니다.
+대부분의 페이지에서는 이 context를 한 차례 더 추상화한 `LoginContext`를 사용(해야)합니다. 좀 더 자세한 로그인 상태가 필요한 회원가입, 로그인 페이지 등에서만 저수준의 `_FirebaseAuthContext`나 `_UserDocumentContext`에 직접 접근할 것입니다.
 
 #### `LoginContext`
 
-앞선 두 contexts는 일반적으로 쓰이지 않습니다. 이름 앞에 underscore(`_`)를 붙인 이유이기도 합니다. 대부분의 경우에는 여기서 만든 `LoginContext`를
-사용하게 됩니다. 2단계 회원가입 절차는 복잡합니다. 애플리케이션의 모든 곳에서 이런 상태를 고려하는 것은 골치아픈 일입니다. 우리는 단지 사용자가 로그인했는지,
-로그인하지 않았는지를 원할 뿐입니다. `LoginContext`가 그런 일을 합니다. 앞선 두 contexts를 추상화해서 사용자(consumer)에게 간단한 상태를
-제공합니다.
+앞선 두 contexts는 일반적으로 직접 쓰이지 않습니다. 이름 앞에 underscore(`_`)를 붙인 이유이기도 합니다. 대부분의 경우에는 여기서 만든 `LoginContext`를 사용하게 됩니다. 2단계 회원가입 절차와 그에 따라 파생되는 상태는 복잡합니다. 애플리케이션의 모든 곳에서 이런 상태들을 모두 고려하는 것은 골치 아픈 일입니다. 많은 경우 우리는 단지 사용자가 로그인했는지, 로그인하지 않았는지만을 원할 뿐입니다. `LoginContext`가 그런 일을 합니다. 앞선 두 contexts를 추상화해서 사용자(consumer)에게 간단한 상태를 제공합니다.
 
 ```tsx
 export const LoginContext = React.createContext<{
@@ -368,9 +362,9 @@ export const LoginProvider = ({ children }) => {
 };
 ```
 
-`LoginContext`는 사용자의 로그인 상태 정보를 담고 있습니다. 로그인이 되어있으면 uid와 `User` 값을 가지고, 되어 있지 않으면 `null` 값을 가집니다.
+`LoginContext`는 사용자의 로그인 상태 정보를 담고 있습니다. 로그인이 되어있으면 uid와 `User` 값을 가지고, 그렇지 않으면 `null` 값을 가집니다.
 그 외에 추가적으로 중간 상태에 대한 처리가 있습니다. (1) 로그인이 진행 중이면 로딩 바를 보여주고, (2) 추가 정보 입력을 마치지 않았으면 추가 정보 입력
-페이지로 이동시킵니다. `LoginContext`는 고수준 context로 두 저수준 context에 의존해서 앞에서 말한 작업을 처리합니다.
+페이지로 이동시킵니다. `LoginContext`는 고수준 context로 저수준 context인 `_UserDocumentContext`에 의존해서 이러한 작업을 처리합니다.
 
 이로써 `LoginProvider`는 context의 값이 로그인 사용자 정보 또는 `null`임을 보장합니다. 그 외의 경우에는 `children`이 렌더되지 않으므로
 '로딩 중' 또는 '회원가입 미완료'와 같은 중간 상태에 대한 고려를 하지 않아도 됩니다.
@@ -457,10 +451,7 @@ Firebase Authentication SDK에 있는 [`signInWithEmailAndPassword()`][signinwit
 <div><p>✏️</p></div>
 <div class="flex-auto">
 
-약간 지저분한 로직은 로그인 아이디를 username에서 이메일로 변경해서 그렇습니다. 처음에 만들 때 username을 로그인 아이디로 사용하도록 하고 이메일주소를
-받지 않았는데 사용자가 비밀번호를 잊었을 때 사용자를 인증할 수 있는 수단이 없다는 문제가 있어서 로그인 아이디를 이메일주소로 바꿨습니다. 하지만 기존 사용자는
-가입할 때 이메일을 입력하지 않았으므로 계속해서 username으로 로그인 할 수 있어야 합니다. 이럴 때 임의로 `<username>@user.heektime.heek.kr`이라는
-이메일 주소를 사용하도록 처리했습니다. (그리고 Firebase Authentication의 비밀번호 로그인은 사용자 아이디로 이메일만을 허용하기도 합니다.)
+로직이 약간 지저분한데, 이전엔 로그인 아이디로 username를 사용하다가 이메일로 변경해서 그렇습니다. Firebase Authentication의 비밀번호 로그인은 사용자 아이디로 이메일만을 허용합니다. 하여 신규 사용자는 회원가입 시 이메일을 로그인 아이디로 사용하도록 변경했습니다. 하지만 이전 사용자는 이메일을 받지 않았으므로 강제로 변경할 수가 없습니다. 그래서 내부적으로 `<username>@user.heektime.heek.kr` 형식의 이메일 주소로 변환해서 처리하도록 했습니다.
 
 </div>
 </aside>
@@ -473,7 +464,7 @@ Firebase Authentication SDK에 있는 [`signInWithEmailAndPassword()`][signinwit
 
 </div>
 
-페이지 코드 자체는 너무 길어서 코드의 일부만 가져왔습니다. `useSemester()` hook을 보면 컬렉션 내의 문서들을 쿼리하는 방법을 알 수 있습니다.
+전체 페이지 코드는 너무 길어서 일부만 가져왔습니다. `useSemester()` hook을 보면 Firestore 컬렉션 내의 문서들을 쿼리하는 방법을 알 수 있습니다.
 
 ```typescript
 const querySnapshot = await getDocs(
@@ -519,11 +510,11 @@ const handleClickSubmit = async () => {
 };
 ```
 
-- [`setDoc()`][setdoc] 함수로 `/users/<id>/timetables/<id>` 경로에 시간표를 만듭니다. [`setDoc()`][setdoc] 함수는 이미 문서가 있는 경우 덮어쓴다는 점에 유의해주세요.
+- [`setDoc()`][setdoc] 함수로 `/users/<id>/timetables/<id>` 경로에 시간표를 만듭니다. [`setDoc()`][setdoc] 함수는 이미 문서가 있는 경우 덮어쓴다는 점을 조심하세요!
 
-- 데이터 필드에 [DocumentReference][documentereference]를 넣으면 reference 타입 값이 됩니다.
+- 데이터 필드에 [DocumentReference][documentereference]를 넣어 reference 타입 값을 설정할 수 있습니다.
 
-- [`serverTimestamp()`][servertimestamp] 함수를 사용하면 값을 서버의 현재시각으로 설정할 수 있습니다. Firestore 보안 규칙을 이용하면 문서 생성 시 특정 필드에 `serverTimestamp()` 값만 허용하도록 강제할 수 있습니다. 이런 방법으로 `createdAt` 필드가 일관된 값을 유지하도록 할 수 있습니다.
+- [`serverTimestamp()`][servertimestamp] 함수를 사용하면 값을 서버의 현재시각으로 설정할 수 있습니다. Firestore 보안 규칙을 이용하면 문서 생성 시 특정 필드에 `serverTimestamp()` 값만 허용토록 강제할 수 있습니다. 이러면 `createdAt` 필드가 일관된 값을 유지하도록 할 수 있습니다.
 
 ## 시간표 보기 — `TimetablePage`
 
@@ -535,8 +526,7 @@ const handleClickSubmit = async () => {
 
 시간표 화면에서는 `Timetable` 문서와 그 하위의 `Lecture` 문서들을 사용합니다. 시간표 화면에서는 실시간 업데이트를 사용했습니다. Firestore SDK를 이용하면 서버에서 불러온 전역 상태를 관리하는 일을 SDK에 맡기는 효과를 얻을 수 있습니다. 옵션을 통해 이미 캐싱된 문서가 있으면 네트워크 요청 없이 불러올 수도 있고, 실시간 업데이트를 사용하면 문서에 변경이 생겼을 때 그것을 감지하고 문서와 애플리케이션을 최신 상태로 동기화 시킬 수 있습니다.
 
-실시간 업데이트를 사용하는 두 쿼리를 가져왔습니다. `useTimetable()`은 단일 문서를 구독하고, `useLectures()`는 여러 문서를 구독합니다. 이번에는 에러
-상태 부분도 그대로 가져와봤습니다. [`onSnapshot()`][onsnapshot] 함수에 인자로 [`DocumentReference`][documentreference]를 주느냐 [`Query`][query]([`CollectionReference`][collectionreference]는 [`Query`][query]를 상속받습니다)를 주느냐에 따라 리스너 함수의 인자로 단일 문서를 나타내는 [`DocumentSnapshot`][documentsnapshot]가 주어지냐 또는 여러 문서를 나타내는 [`QuerySnapshot`][querysnapshot]가 주어지냐가 달라질 뿐 크게 다른 부분은 없습니다.
+실시간 업데이트를 사용하는 두 쿼리를 가져왔습니다. `useTimetable()`은 단일 문서를 구독하고, `useLectures()`는 여러 문서를 구독합니다. 이번에는 에러 처리 부분도 그대로 가져와봤습니다. [`onSnapshot()`][onsnapshot] 함수에 인자로 [`DocumentReference`][documentreference]를 주느냐 [`Query`][query]([`CollectionReference`][collectionreference]는 [`Query`][query]를 상속받습니다)를 주느냐에 따라 리스너 함수의 인자로 단일 문서를 나타내는 [`DocumentSnapshot`][documentsnapshot]가 주어지냐 또는 여러 문서를 나타내는 [`QuerySnapshot`][querysnapshot]가 주어지냐가 달라질 뿐 크게 다른 부분은 없습니다.
 
 #### `useTimetable()`
 
@@ -623,9 +613,11 @@ const useLectures = (
 [create_a_password-based_account]: https://firebase.google.com/docs/auth/web/password-auth?hl=ko#create_a_password-based_account
 [firestore transactions and batched writes]: https://firebase.google.com/docs/firestore/manage-data/transactions?hl=en
 [firestore transaction serializability and isolation]: https://firebase.google.com/docs/firestore/transaction-data-contention?hl=en
+[security-rules]: https://firebase.google.com/docs/rules?hl=en
 [get realtime updates with cloud firestore]: https://firebase.google.com/docs/firestore/query-data/listen?hl=en
-[createuserwithemailandpassword]: https://firebase.google.com/docs/reference/js/auth.md#createuserwithemailandpassword
-[signinwithemailandpassword]: https://firebase.google.com/docs/reference/js/auth.md#signinwithemailandpassword
+[createuserwithemailandpassword]: https://firebase.google.com/docs/reference/js/auth.md?hl=en#createuserwithemailandpassword
+[signinwithemailandpassword]: https://firebase.google.com/docs/reference/js/auth.md?hl=en#signinwithemailandpassword
+[auth-user]: https://firebase.google.com/docs/reference/js/auth.user?hl=en
 [getdocs]: https://firebase.google.com/docs/reference/js/firestore_.md?hl=en#getdocs
 [setdoc]: https://firebase.google.com/docs/reference/js/firestore_lite.md?hl=en#setdoc
 [onsnapshot]: https://firebase.google.com/docs/reference/js/firestore_.md?hl=en#onsnapshot
