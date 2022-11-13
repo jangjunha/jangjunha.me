@@ -1,5 +1,6 @@
 +++
 title = "DB 스키마에 대응하는 Firestore 스키마 정의하기"
+description = "이전에 관계형 데이터베이스(RDB)에 저장했던 데이터를 Firestore에 어떻게 저장했는지 살펴봅니다."
 date = "2022-11-06"
 
 [taxonomies]

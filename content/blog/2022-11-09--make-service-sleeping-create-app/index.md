@@ -1,5 +1,6 @@
 +++
 title = "Firebase로 웹사이트 만들기"
+description = "기존 서비스의 웹사이트에 Firebase Authentication, Firestore를 적용해보았습니다."
 date = "2022-11-09"
 
 [taxonomies]
