@@ -36,6 +36,14 @@ featured = true
 - SnapKit
 - Eureka
 
+## 포스트
+
+- [〈HeekTime 프로젝트 히스토리〉](https://jangjunha.me/blog/heektime-project-history/)
+
+- [〈잠자는 서비스 만들기〉](https://jangjunha.me/blog/make-service-sleeping/) 시리즈
+
+## 스크린샷
+
 <div class="[&_img]:max-h-[48rem] [&_img]:shadow-lg [&_img]:rounded">
 {{ figure(src="./iPhone 8-1_timetable_framed.png", caption="시간표 화면") }}
 {{ figure(src="./iPhone 8-4_timetable-list_framed.png", caption="시간표 목록 — 복제하거나 삭제할 수 있습니다") }}
