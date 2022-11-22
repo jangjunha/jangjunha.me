@@ -7,7 +7,7 @@ weight = 201300
 [extra]
 year_begin = 2013
 links = [
-    { name="Play Store", url="https://play.google.com/store/apps/details?id=jangJunha.bricks", broken=true }
+    { name="Google Play", url="https://play.google.com/store/apps/details?id=jangJunha.bricks", broken=true }
 ]
 
 cover = "1dbrick_android_multi_2.png"
@@ -17,7 +17,7 @@ cover = "1dbrick_android_multi_2.png"
 벽돌(파랑)의 내구도가 높을수록 진한 파란색으로 표시됩니다.
 화면 모서리에 튕길 때마다 공의 데미지가 증가하며, 최대 3회까지 튕길 수 있습니다.
 
-[Play Store (중단)](https://play.google.com/store/apps/details?id=jangJunha.bricks)
+[Google Play (중단)](https://play.google.com/store/apps/details?id=jangJunha.bricks)
 
 {{ figure(src="./1dbrick_android_2.png", caption="맵은 랜덤하게 생성됩니다.") }}
 {{ figure(src="./1dbrick_android_multi_1.png", caption="(미출시) 참가코드를 공유한 두 사람이 어디서나 대결할 수 있습니다. 두 사람이 모두 준비되면 게임이 시작됩니다.") }}

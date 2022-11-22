@@ -10,6 +10,8 @@ year_end = 2018
 links = [
     { name="App Store", url="https://itunes.apple.com/kr/app/%ED%94%84%EB%A6%BD-frip-%EC%95%84%EC%9B%83%EB%8F%84%EC%96%B4-%EC%97%AC%ED%96%89-%ED%94%BC%ED%8A%B8%EB%8B%88%EC%8A%A4-%EB%AC%B8%ED%99%94%EC%83%9D%ED%99%9C/id1066782203?mt=8" },
 ]
+
+cover = "frip-home.PNG"
 +++
 
 [App Store](https://itunes.apple.com/kr/app/%ED%94%84%EB%A6%BD-frip-%EC%95%84%EC%9B%83%EB%8F%84%EC%96%B4-%EC%97%AC%ED%96%89-%ED%94%BC%ED%8A%B8%EB%8B%88%EC%8A%A4-%EB%AC%B8%ED%99%94%EC%83%9D%ED%99%9C/id1066782203?mt=8)

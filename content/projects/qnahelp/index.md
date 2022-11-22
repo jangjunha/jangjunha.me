@@ -7,14 +7,14 @@ weight = 201201
 [extra]
 year_begin = 2012
 links = [
-    { name="Play Store", url="https://play.google.com/store/apps/details?id=jangJunha.qna_helper" },
+    { name="Google Play", url="https://play.google.com/store/apps/details?id=jangJunha.qna_helper" },
     { name="웹사이트", url="http://qnahelp.cafe24.com" },
 ]
 
 cover = "qnahelp_android_1.png"
 +++
 
-[Website](http://qnahelp.cafe24.com) [Play Store](https://play.google.com/store/apps/details?id=jangJunha.qna_helper)
+[Website](http://qnahelp.cafe24.com) [Google Play](https://play.google.com/store/apps/details?id=jangJunha.qna_helper)
 
 ### Website
 

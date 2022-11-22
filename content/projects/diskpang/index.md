@@ -7,7 +7,7 @@ weight = 201301
 [extra]
 year_begin = 2013
 links = [
-    { name="Play Store (컨트롤러)", url="https://play.google.com/store/apps/details?id=com.modupost.diskpang", broken=true },
+    { name="Google Play (컨트롤러)", url="https://play.google.com/store/apps/details?id=com.modupost.diskpang", broken=true },
 ]
 
 cover = "diskpang_pc_2.png"
@@ -20,7 +20,7 @@ cover = "diskpang_pc_2.png"
 - JAVA
 - JAVA NIO.2
 
-### Android Controller [Play Store (중단)](https://play.google.com/store/apps/details?id=com.modupost.diskpang)
+### Android Controller [Google Play (중단)](https://play.google.com/store/apps/details?id=com.modupost.diskpang)
 
 - Java
 

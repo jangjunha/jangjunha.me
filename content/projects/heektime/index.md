@@ -1,6 +1,6 @@
 +++
 title = "HeekTime"
-description = "강력한 강의 필터 기능으로 시간표를 '짜는' 데 특화된 시간표 구성 애플리케이션"
+description = "강의 검색 및 필터링에 특화된 대학생 시간표 작성 애플리케이션"
 
 weight = 201603
 
@@ -16,25 +16,22 @@ cover = "iPhone 8-1_timetable.png"
 featured = true
 +++
 
-수많은 강의를 필터링하여 손쉽게 원하는 강의를 찾을 수 있습니다.  
-(필터 옵션: 빈 시간대만 검색 / 요일 / 교시 / 분류 / 학점)
+학교 시간표를 짤 때 원하는 강의를 찾기 어려워서 과제 겸 시작한 사이드프로젝트입니다. 이후에는 적용해보고 싶은 기술들을 적용해보면서 오랜 기간 운영해왔습니다.
 
-[App Store](https://itunes.apple.com/mr/app/heektime-hiigtaim/id1134379996)
-[웹사이트](https://heektime.heek.kr/)
+- **Infra**
 
-### Backend
+  - GKE에서 Firebase 기반 서버리스 아키텍처로 전환
 
-- Python
-- Flask
-- Google App Engine
+    📝 관련 포스트: [〈잠자는 서비스 만들기〉](https://jangjunha.me/blog/make-service-sleeping/)
 
-### iOS
+- **iOS** [\[App Store\]](https://itunes.apple.com/mr/app/heektime-hiigtaim/id1134379996)
 
-- Swift
-- Alamofire
-- Realm
-- SnapKit
-- Eureka
+  - ReactorKit 또는 RxMVVM 아키텍처를 적용해서 선언적 작성
+  - [Pure DI][pure-di]로 명시적인 의존성 관리
+
+- **Website** [\[웹사이트\]](https://heektime.heek.kr/) [\[GitHub\]](https://github.com/jangjunha/heektime-web-v3)
+
+  - TypeScript React
 
 ## 포스트
 
@@ -55,3 +52,5 @@ featured = true
 {{ figure(src="./heektime-web-screenshot.png", caption="웹사이트") }}
 
 </div>
+
+[pure-di]: https://github.com/devxoul/Pure
