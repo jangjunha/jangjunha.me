@@ -25,7 +25,7 @@
             href="{{ link.url }}"
             target="_blank"
             rel="noopener noreferrer"
-            class="no-underline bg-tint-200 text-tint-800 font-normal text-sm px-2 py-0.5 rounded{% if link.broken %} bg-gray-200 text-gray-400 cursor-not-allowed{% endif %}"
+            class="no-underline font-normal text-sm px-2 py-0.5 rounded{% if not link.broken %} bg-tint-200 text-tint-800{% else %} bg-gray-200 text-gray-400 cursor-not-allowed{% endif %}"
             >{{ link.name }}</a
           >
           {% endfor %} {% endif %}
