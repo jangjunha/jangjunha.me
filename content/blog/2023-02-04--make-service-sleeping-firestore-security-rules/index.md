@@ -45,7 +45,7 @@ Firestore 보안 규칙은 자체적으로 정의한 언어로 작성합니다. 
 
 </aside>
 
-이 글에서 제가 필요했던 요구사항을 간단한 것부터 다소 복잡했던 것까지 하나씩 구현해보려고 합니다. 이 글이 보안 규칙 작성을 처음 시작하는 분들이나 저와 같은 요구사항의 레퍼런스를 필요로 했던 분들에게 도움이 되기를 바랍니다.
+글에서 제가 필요했던 요구사항을 간단한 것부터 다소 복잡했던 것까지 하나씩 구현해보려고 합니다. 보안 규칙 작성을 처음 시작하는 분들이나 저와 같은 요구사항의 레퍼런스를 필요로 했던 분들에게 도움이 되기를 바랍니다.
 
 ## Firebase 프로젝트 만들기
 
@@ -53,11 +53,11 @@ Firestore 보안 규칙은 자체적으로 정의한 언어로 작성합니다. 
 
 ![Firebase 콘솔 / Firestore 첫 화면](firestore-console-index.png)
 
-우선 Test 모드로 생성. 이렇게 하면 30일간 로그인(Firebase Authentication을 통한 인증) 없이 아무나 데이터베이스에 접근할 수 있도록 만들어집니다.
+Test 모드를 선택합니다. Test 모드를 선택하면 30일간 로그인(Firebase Authentication을 통한 인증) 없이 아무나 데이터베이스에 접근할 수 있도록 만들어집니다.
 
 ![Firebase 콘솔 / Firestore 데이터베이스 생성 / 모드 설정](create-database-step-1.png)
 
-Cloud Firestore 위치 설정. 여기선 서울(asia-northeast3)로 설정합니다.
+이어서 데이터베이스의 위치를 설정합니다. 여기선 서울(asia-northeast3)로 설정합니다.
 
 ![Firebase 콘솔 / Firestore 데이터베이스 생성 / 위치 설정](create-database-step-2.png)
 
