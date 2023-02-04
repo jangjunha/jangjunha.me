@@ -2,6 +2,10 @@
 
 {% extends "blog-base.html" %}
 
+{%- block title -%}
+{{ page.title }} - {{ super() }}
+{%- endblock -%}
+
 {%- block meta %}
 {{ super() }}
 <meta name="twitter:card" content="summary">
