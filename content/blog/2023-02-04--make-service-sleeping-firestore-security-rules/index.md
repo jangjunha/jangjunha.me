@@ -1,5 +1,5 @@
 +++
-title = "Firestore 보안 규칙 작성하기 (1) 시작"
+title = "Firestore 보안 규칙 작성 시작하기"
 description = "보안 규칙을 작성해서 Firestore에 허용되지 않는 접근을 막는 방법을 차근차근 알아봅니다."
 date = "2023-02-04"
 
