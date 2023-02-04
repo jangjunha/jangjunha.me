@@ -15,7 +15,8 @@ taxonomies = [{ name = "tags", feed = true }]
 # Whether to do syntax highlighting
 # Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
 highlight_code = true
-highlight_theme = "charcoal"
+highlight_theme = "solarized-light"      # `rules` 하이라이팅에 문제 있어서 임시로 문제 안생기는 테마로 변경
+extra_syntaxes_and_themes = ["syntaxes"]
 
 [slugify]
 anchors = "safe"

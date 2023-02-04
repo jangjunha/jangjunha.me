@@ -8,4 +8,6 @@
 
 [Firebase로 웹사이트 만들기](@/blog/2022-11-09--make-service-sleeping-create-app/index.md)
 
+[Firestore 보안 규칙 작성하기 (1) 시작](@/blog/2023-02-04--make-service-sleeping-firestore-security-rules/index.md)
+
 </section>

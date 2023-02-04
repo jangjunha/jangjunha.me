@@ -1,0 +1,483 @@
+%YAML 1.2
+---
+name: Firebase Security Rules
+file_extensions: [rules]
+scope: source.cel
+
+variables:
+  identifier_continue: "[[:alnum:]_]"
+  identifier: '\b[[:alpha:]_]{{identifier_continue}}*\b'
+  identifier_path: '({{identifier}}[ ]*\.[ ]*)*{{identifier}}'
+
+  builtin_types: |-
+    \b(?x:
+      int | uint | double | number | bool
+    | string | bytes
+    | list | map
+    | timestamp
+    | null_type | type
+    )\b
+
+  modifier: '\b(read|write|list|get|create|update|delete)\b'
+
+contexts:
+  main:
+    - meta_include_prototype: false
+    - match: ""
+      push: [statements, version-def]
+
+  version-def:
+    - meta_include_prototype: false
+    - match: ^(rules_version)\s*(=)?\s*('\d+')(;)?
+      captures:
+        1: entity.other.cel
+        2: keyword.operator.assignment.cel
+        3: string.quoted.single.cel
+    - match: ^|(?=\S)
+      pop: true
+
+  prototype:
+    - include: comments
+
+  comments:
+    - include: line-comments
+    - include: block-comments
+
+  ###[ Statements ]###
+
+  statements:
+    - include: service-stmt
+    - include: match-stmt
+    - include: function-stmt
+    - include: let-stmt
+    - include: return-stmt
+    - include: allow-stmt
+
+  service-stmt:
+    - match: \b(service)\s+([\w.]+)\s+({)
+      captures:
+        1: keyword.control.service.cel
+        2: meta.statement.service.cel
+        3: punctuation.section.block.begin.cel
+      set:
+        - match: \b}
+          scope: punctuation.section.block.end.cel
+          pop: true
+        - include: statements
+
+  match-stmt:
+    - match: \b(match)\b
+      captures:
+        1: keyword.control.match.cel
+      push:
+        - meta_scope: meta.match.cel
+        - include: match-block
+        - include: paths
+
+  match-block:
+    - match: \{
+      scope: punctuation.section.block.begin.cel
+      set:
+        - meta_scope: meta.block.cel
+        - match: \}
+          scope: punctuation.section.block.end.cel
+          pop: 1
+        - include: statements
+
+  function-stmt:
+    - match: \b(function)\b
+      captures:
+        1: keyword.declaration.function.cel
+      push:
+        - meta_scope: meta.function.cel
+        - include: function-block
+        - match: "(?={{identifier}})"
+          push:
+            - meta_content_scope: entity.name.function.cel
+            - match: "{{identifier}}"
+              scope: meta.function-name.cel
+            - match: ""
+              pop: true
+        - match: '(?=\()'
+          set:
+            - match: \(
+              scope: meta.function.parameters.cel punctuation.section.parameters.begin.cel
+              set: function-parameters
+
+  function-parameters:
+    - meta_content_scope: meta.function.parameters.cel
+    - match: \)
+      scope: punctuation.section.parameters.end.cel
+      pop: true
+    - include: comments
+    - match: ","
+      scope: punctuation.separator.parameters.cel
+    - match: "{{identifier}}"
+      scope: variable.parameter.cel
+
+  function-block:
+    - match: \{
+      scope: punctuation.section.block.begin.cel
+      set:
+        - meta_scope: meta.block.cel
+        - match: \}
+          scope: punctuation.section.block.end.cel
+          pop: 1
+        - include: statements
+
+  let-stmt:
+    - match: \b(let)\b
+      captures:
+        1: keyword.declaration.variable.cel
+      set:
+        - meta_scope: meta.let.cel
+        - match: ";"
+          pop: true
+        - match: \s*=\s*
+          scope: keyword.operator.assignment.cel
+          push:
+            - match: "(?=;)"
+              pop: true
+            - include: expression
+        - match: "(?={{identifier}})"
+          push:
+            - meta_content_scope: variable.other.readwrite.cel
+            - match: "{{identifier}}"
+              scope: variable.other.readwrite.cel
+            - match: \=
+              pop: true
+            - match: ""
+              pop: true
+        # - match: ""
+        #   pop: true
+
+  return-stmt:
+    - match: \b(return)\b
+      captures:
+        1: keyword.control.flow.return.cel
+      set:
+        - match: ";"
+          pop: true
+        - include: expression
+
+  allow-stmt:
+    - match: \b(allow)\b\s*
+      captures:
+        1: keyword.declaration.allow.cel
+      push:
+        - meta_scope: meta.allow.cel
+        - match: \s*:\s*
+          scope: punctuation.separator.cel
+        - match: \b({{modifier}})(\s*,\s*{{modifier}})*\b
+          scope: keyword.modifier.cel
+        - match: \b(if)\b
+          captures:
+            1: keyword.control.conditional.cel
+          push:
+            - match: ";"
+              pop: true
+            - include: expression
+        - match: ""
+          pop: true
+      # set:
+      #   - include: expression
+
+  ###[ Expressions ]###
+
+  expression:
+    - include: strings
+    - include: paths
+    - include: constants
+    - include: numbers
+    - include: operators
+    - include: function-calls
+    - include: item-access
+    - include: lists
+    - include: name-specials
+    # - include: dictinaries-and-sets
+
+  expression-in-a-group:
+    - include: expression
+    - include: qualified-name
+    # - match: '(\.) *(?={{identifier}})'
+    #   captures:
+    #     1: punctuation.accessor.dot.cel
+    #   push:
+    #     - include: name
+    #     - match: ''
+    #       pop: true
+
+  after-expression:
+    # direct function call
+    - match: '\s*(\()'
+      captures:
+        1: punctuation.section.arguments.begin.cel
+      push: [function-call-arguments]
+    # item access
+    - match: '\s*(\[)'
+      captures:
+        1: meta.item-access.cel punctuation.section.brackets.begin.cel
+      push:
+        - meta_content_scope: meta.item-access.arguments.cel
+        - match: \]
+          scope: meta.item-access.cel punctuation.section.brackets.end.cel
+          pop: true
+        - include: expression-in-a-group
+    - include: function-calls
+    # arbitrary attribute access
+    - match: '\s*(\.)'
+      captures:
+        1: punctuation.accessor.dot.cel
+      push:
+        - include: name
+        - match: ""
+          pop: true
+    - match: ""
+      pop: true
+
+  function-calls:
+    - match: '(?=(\.\s*)?{{identifier_path}}\s*\()'
+      push: [function-call-wrapper, qualified-name-until-leaf]
+
+  function-call-wrapper:
+    - meta_scope: meta.function-call.cel
+    - match: (?=\() # need to remove meta.function-call.cel from opening parens
+      set:
+        - match: \(
+          scope: punctuation.section.arguments.begin.cel
+          set: [after-expression, function-call-arguments]
+    - match: (\.)\s*(?={{identifier}})
+      captures:
+        1: punctuation.accessor.dot.cel
+      push:
+        - meta_scope: meta.qualified-name.cel
+        - meta_content_scope: variable.function.cel
+        - include: dotted-name
+        - include: name
+        - match: ""
+          pop: true
+    - match: (?={{identifier}})
+      push:
+        - meta_scope: meta.qualified-name.cel variable.function.cel
+        - include: name-specials
+        - include: name
+        - match: ""
+          pop: true
+
+  function-call-arguments:
+    - meta_scope: meta.function-call.arguments.cel
+    - match: \)
+      scope: punctuation.section.arguments.end.cel
+      pop: true
+    - include: arguments
+
+  arguments:
+    - include: argument-separators
+    - include: expression-in-a-group
+
+  argument-separators:
+    - match: ","
+      scope: punctuation.separator.arguments.cel
+
+  name:
+    - include: name-specials
+    - match: "{{identifier}}"
+      scope: meta.generic-name.cel
+
+  dotted-name:
+    - match: \s*(\.)\s*({{identifier}})
+      captures:
+        1: punctuation.accessor.dot.cel
+        2: meta.generic-name.cel
+
+  qualified-name:
+    - match: (?={{identifier_path}})
+      push: qualified-name-content
+    - match: \.
+      scope: punctuation.accessor.dot.cel
+
+  qualified-name-content:
+    - meta_scope: meta.qualified-name.cel
+    - include: name
+    - include: dotted-name
+    - match: ""
+      pop: true
+
+  qualified-name-until-leaf:
+    # Push this together with another context to match a qualified name
+    # until the last non-special identifier (if any).
+    # This allows the leaf to be scoped individually.
+    - meta_scope: meta.qualified-name.cel
+    # If a line continuation follows, this may or may not be the last leaf (most likley not though)
+    - match: (?={{identifier}}\s*(\.|\\))
+      push:
+        - include: name-specials
+        - include: name
+        - match: ""
+          pop: true
+    - match: (\.)\s*(?={{identifier}}\s*(\.|\\))
+      captures:
+        1: punctuation.accessor.dot.cel
+      push:
+        - include: name
+        - match: ""
+          pop: true
+    - match: \.(?!\s*{{identifier}}) # don't match last dot
+      scope: punctuation.accessor.dot.cel
+    - match: (?=\S|$)
+      pop: true
+
+  name-specials:
+    - match: "{{builtin_types}}"
+      scope: support.type.cel
+
+  constants:
+    - include: booleans
+    - include: nulls
+    # - match: \.{3}(?!\w)
+    #   scope: constant.language.cel
+
+  booleans:
+    - match: \b(true|false)\b
+      scope: constant.language.boolean.cel
+
+  nulls:
+    - match: \bnull\b
+      scope: constant.language.null.cel
+
+  numbers:
+    - match: '\b(-)?[0-9.]+\b'
+      scope: constant.numeric.cel
+
+  operators:
+    - match: <\=|>\=|\=\=|<|>|\!\=
+      scope: keyword.operator.comparison.cel
+    - match: \+|\-|\*|/|%
+      scope: keyword.operator.arithmetic.cel
+    - match: '\!|&&|\|\||(\b(in|is)\b)'
+      comment: keyword operators that evaluate to True or False
+      scope: keyword.operator.logical.cel
+    - match: ","
+      scope: punctuation.separator.sequence.cel
+
+  ###[ Paths ]###
+  paths: # <- FIXME: 괄호 카운팅 필요
+    - match: /
+      scope: string.quoted.single.cel
+      push:
+        - meta_include_prototype: false
+        - meta_content_scope: string.quoted.single.cel
+        - match: (?=\s|$)
+          pop: true
+        - include: interpolation-end
+        - include: interpolations
+
+  interpolations:
+    - match: \$\(
+      scope: punctuation.section.interpolation.begin.cel
+      push:
+        - include: interpolation-meta
+        - include: interpolation-end
+        - include: interpolation-expression
+
+  interpolation-meta:
+    - clear_scopes: 1
+    - meta_include_prototype: false
+    - meta_scope: meta.interpolation.clear_scopes
+    - match: ""
+      pop: 1
+
+  interpolation-end:
+    - match: \)
+      scope: punctuation.section.interpolation.end.cel
+      pop: 2
+
+  interpolation-expression:
+    - meta_content_scope: source.cel.embedded
+    - match: '(?=\s*(?:=\s*)?(!\)))'
+      pop: 1
+    - include: expression-in-a-group
+
+  ###[ Strings ]###
+
+  strings:
+    - include: triple-double-quoted-string
+    - include: double-quoted-string
+    - include: triple-single-quoted-string
+    - include: single-quoted-string
+
+  triple-double-quoted-string:
+    - match: ([rR]?)(""")
+      scope: string.quoted.double.cel
+      captures:
+        1: storage.type.string.cel
+        2: punctuation.definition.string.begin.cel
+      push:
+        - meta_include_prototype: false
+        - meta_content_scope: string.quoted.double.cel
+        - match: '"""'
+          scope: punctuation.definition.string.end.cel
+          pop: true
+
+  double-quoted-string:
+    - match: ([rR]?)(")
+      scope: string.quoted.double.cel
+      captures:
+        1: storage.type.string.cel
+        2: punctuation.definition.string.begin.cel
+      push:
+        - meta_include_prototype: false
+        - meta_content_scope: string.quoted.double.cel
+        - match: '"'
+          scope: punctuation.definition.string.end.cel
+          pop: true
+        - include: illegal-string-end
+
+  triple-single-quoted-string:
+    - match: ([rR]?)(''')
+      scope: string.quoted.single.cel
+      captures:
+        1: storage.type.string.cel
+        2: punctuation.definition.string.begin.cel
+      push:
+        - meta_include_prototype: false
+        - meta_content_scope: string.quoted.single.cel
+        - match: "'''"
+          scope: punctuation.definition.string.end.cel
+          pop: true
+
+  single-quoted-string:
+    - match: ([rR]?)(')
+      scope: string.quoted.single.cel
+      captures:
+        1: storage.type.string.cel
+        2: punctuation.definition.string.begin.cel
+      push:
+        - meta_include_prototype: false
+        - meta_content_scope: string.quoted.single.cel
+        - match: "'"
+          scope: punctuation.definition.string.end.cel
+          pop: true
+        - include: illegal-string-end
+
+  illegal-string-end:
+    - match: \n
+      scope: invalid.illegal.unclosed-string.cel
+
+  ###[ Comments ]###
+
+  line-comments:
+    - match: /{2}
+      scope: punctuation.definition.comment.cel
+      push: line-comment-double-slash-body
+
+  line-comment-end:
+    - match: (//+)?\n
+      captures:
+        1: punctuation.definition.comment.cel
+      pop: 1
+
+  line-comment-double-slash-body:
+    - meta_include_prototype: false
+    - meta_scope: comment.line.double-slash.cel
+    - include: line-comment-end
