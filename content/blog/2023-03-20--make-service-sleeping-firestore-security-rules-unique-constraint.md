@@ -1,8 +1,7 @@
 +++
-title = "Firestore 보안 규칙 작성하기 (2) 고유성 보장하기"
-description = ""
-date = "2023-02-04"
-draft = true
+title = "Firestore 보안 규칙으로 필드 고유성 보장하기"
+description = "Firestore 문서에서 특정 필드의 고유성을 보장하는 방법을 알아봅니다."
+date = "2023-03-20"
 
 [taxonomies]
 tags = ["serverless", "firebase", "firestore", "gcp"]
@@ -11,23 +10,21 @@ tags = ["serverless", "firebase", "firestore", "gcp"]
 featured = true
 +++
 
-Brian Neisler님이 작성하신 스택오버플로우 답변<https://stackoverflow.com/a/59892127>의 해결책과 코드를 사용했습니다. 진행 중인 프로젝트에 맞게 코드를 약간 수정하고 설명과 테스트 코드를 덧붙였습니다. 이 글은 원 답변의 [CC BY-SA][cc-by-sa] 라이센스를 따라 이용하실 수 있습니다.
+<aside class="bg-tint-200 px-6 py-1 mb-12 rounded-3xl">
 
----
+이 글의 해결책과 코드는 **Brian Neisler**님의 답변 [https://stackoverflow.com/a/59892127][origin]을 바탕으로 작성했으며, 진행 중인 프로젝트에 맞게 코드를 약간 수정하고 설명과 테스트 코드를 덧붙였습니다. 이 글은 원 답변의 [CC BY-SA][cc-by-sa] 라이센스를 따라 이용하실 수 있습니다.
+
+</aside>
 
 이전 글에서 Firebase 보안 규칙에 대해서 간단히 알아보고, 회원 정보에 대한 보안 규칙을 거의 작성했습니다. 또 Firebase 에뮬레이터를 활용해서 보안 규칙을 테스트 하는 방법도 알아보았습니다.
 
-이전: 보안 규칙의 구조, `read`(`get`, `list`), `write`(`create`, `update`) 동작에 대한 접근 허용하기, 사용자 로그인 처리하기, 소유자만 수정할 수 있도록 하기, 필드를 제약하는 방법, 필드의 값을 검증하기, `createdAt` 및 `updatedAt` 필드 최신 유지하기
-
-이 글: 고유성 유지하기. 보안 규칙에서 다른 문서에 접근하기, 일괄 쓰기/트랜잭션 처리하기
+이 글에서는 어떤 속성의 고유성을 유지하는 방법을 중심으로 보안 규칙에서 다른 문서에 접근하는 방법, 일괄 쓰기와 트랜잭션을 처리하는 방법을 알아봅니다.
 
 ## Username 고유성 유지하기
 
-Firestore에서는 특정 필드의 고유성을 보장해주는 기능을 제공하지 않습니다. 하지만 다른 방법을 통해 구현할 수 있습니다.
+Firestore에서는 특정 필드의 고유성을 보장해주는 기능을 제공하지 않습니다. 하지만 다른 방법을 통해 구현할 수 있습니다. Firestore에서 문서의 ID는 고유합니다. 따라서 username을 하나의 문서로 보면 username을 고유하게 유지할 수 있습니다.
 
-Firestore에서 문서의 ID는 고유합니다. `username`을 하나의 문서로 보면 `username`을 고유하게 유지할 수 있습니다.
-
-먼저 `/indices/user/usernames/{username}` 경로에 있는 인덱스 문서의 보안 규칙을 작성해봅시다. 인덱스 문서의 키는 문서의 ID이고 문서의 내용으로는 인덱스의 소유자를 나타내는 `value` 필드 단 하나만 갖습니다. 당연히 인덱스 생성 시에는 소유자를 자신으로 지정해야 하고, 삭제 시에는 자신이 소유한 인덱스만 삭제할 수 있어야 할 것입니다.
+먼저 `/indices/user/usernames/{username}` 경로에 있는 인덱스 문서의 보안 규칙을 작성해봅시다. 인덱스 문서의 키는 문서의 ID이고 문서의 내용으로는 인덱스의 소유자를 나타내는 `value` 필드 단 하나만 갖습니다. 인덱스 생성 시에는 소유자를 자신으로 지정해야 하고, 삭제 시에는 자신이 소유한 인덱스만 삭제할 수 있어야 합니다.
 
 ```rules
 rules_version = '2';
@@ -49,13 +46,11 @@ service cloud.firestore {
 }
 ```
 
-사용자는 한 트랜잭션 안에서 인덱스 문서와 회원 문서를 동시에 생성/수정해야합니다. 보안 규칙에서는 둘을 함께 수정했는지 검사합니다. 인덱스 문서의 ID가 고유하기 때문에 회원 문서의 username 필드는 자연스레 고유성이 보장됩니다.
+사용자는 한 트랜잭션 안에서 인덱스 문서와 회원 문서를 동시에 생성 혹은 수정해야 합니다. 보안 규칙은 둘을 함께 수정했는지 검사합니다. 인덱스 문서의 ID가 고유하기 때문에 회원 문서의 username 필드는 자연스레 고유성이 보장됩니다.
 
-지금까지는 검증 과정에서 `request.resource.data`를 통해 현재 문서만을 살펴봤습니다. 이제는 회원 문서를 수정할 때 username 문서를 확인하고, 그 반대도 확인해야합니다. [Firebase 보안 규칙에서는 다른 문서 접근을 위해 `get()`, `getAfter()`, `exists()`, `existsAfter()` 함수를 제공합니다.](https://firebase.google.com/docs/firestore/security/rules-conditions?hl=en#access_other_documents)
+지금까지는 검증 과정에서 `request.resource.data`를 통해 현재 수정하려는 문서만을 살펴봤습니다. 이제는 회원 문서를 수정할 때 username 문서를 확인해야 하고, 그 반대의 경우도 확인해야합니다. [Firebase 보안 규칙에서는 다른 문서 접근을 위해 `get()`, `getAfter()`, `exists()`, `existsAfter()` 함수를 제공합니다.](https://firebase.google.com/docs/firestore/security/rules-conditions?hl=en#access_other_documents)
 
-(앞으로는 단순함을 위해 이전 글에서 다뤘던 다른 조건은 생략합니다)
-
-회원 문서를 만들 때 해당 `username`에 대한 올바른(사용 가능한) 인덱스도 같이 생성하도록 강제해봅시다.
+회원 문서를 만들 때 해당 `username`에 대한 올바른(사용 가능한) 인덱스도 같이 생성하도록 강제해봅시다. 단순함을 위해 이전 글에서 다뤘던 다른 조건은 생략하겠습니다.
 
 ```rules
 rules_version = '2';
@@ -73,7 +68,7 @@ service cloud.firestore {
 
 현재 트랜잭션 처리 이후 시점의 인덱스 문서를 가져와서, `value` 값이 현재 회원의 ID와 일치하는지 검사합니다. 인덱스 문서가 존재하고, 소유자가 본인이어야 합니다.
 
-이번엔 반대도 처리해봅시다. 인덱스만 만들고 회원 정보는 만들지 않으면 안되니까요.
+이번엔 반대의 경우도 처리해봅시다. 인덱스만 만들고 회원 정보는 만들지 않는 일이 있으면 안되니까요.
 
 ```rules,hl_lines=8-10
 rules_version = '2';
@@ -91,11 +86,11 @@ service cloud.firestore {
 }
 ```
 
-이제 `username` 중복 없이 회원을 생성할 수 있게 됐습니다!
+이제 `username`의 중복 없이 회원을 **생성**할 수 있게 됐습니다!
 
 ### 인덱스 유틸리티 함수 만들기
 
-`username` 수정은 이보단 약간 복잡합니다. 수정에 대한 보안 규칙을 작성하기 전에 인덱스 작업에 대한 일반화된 함수들을 도입하겠습니다. 이 함수들은 원글의 답변에서 가져온 함수들입니다.
+`username` **변경**은 이보단 약간 복잡합니다. 변경에 대한 보안 규칙을 작성하기 전에 인덱스 작업에 대한 일반화된 함수들을 도입하겠습니다. 이 함수들은 [원글][origin]에서 가져온 함수들입니다.
 
 ```rules
 rules_version = '2';
@@ -167,11 +162,16 @@ service cloud.firestore {
 }
 ```
 
-### username 수정
+### username 변경
 
-수정 시에는 1) 이전에 소유하던 username 인덱스를 삭제하고, 2) 새 username 인덱스를 만들고, 3) 회원 문서의 username을 수정해야합니다. 마찬가지로 일관성 유지하기 위해서는 이 작업들이 모두 한 트랜잭션 안에서 이뤄져야합니다. 생성과 다른 점은 이전에 사용하던 username 인덱스를 놓아주어야(삭제해야) 한다는 점입니다.
+username을 변경할 때 해야 하는 일을 생각해봅시다.
+1. 이전에 소유하던 username 인덱스를 삭제하고,
+1. 새 username 인덱스를 만들고,
+1. 회원 문서의 username을 수정해야합니다.
 
-생성 때는 인덱스 검사를 항상 해야하지만, 수정 때는 `username` 필드를 변경하지 않을 수도 있습니다. `username` 필드가 변경됐을 때만 인덱스 검사를 하도록 해야합니다.
+마찬가지로 일관성 유지하기 위해서는 이 작업들이 모두 **한 트랜잭션 안에서** 이뤄져야합니다. 생성과 다른 점은 이전에 사용하던 username 인덱스를 놓아주어야(삭제해야) 한다는 점입니다.
+
+또 다른 점이 있습니다. 회원을 생성할 때는 항상 username 인덱스를 검사해야 했지만, 회원 문서를 수정할 때는 `username` 필드를 변경하지 않을 수도 있습니다. `username` 필드가 변경됐을 때만 인덱스 검사를 하도록 해야합니다.
 
 ```rules
 rules_version = '2';
@@ -204,6 +204,8 @@ service cloud.firestore {
 ```
 
 ### 테스트 작성하기
+
+마지막으로 테스트를 작성했습니다.
 
 ```tsx
 describe("유저 정보", () => {
@@ -441,8 +443,11 @@ describe("유저 정보", () => {
 });
 ```
 
----
+이로써 회원 문서에서 username 필드의 고유성을 보장하고, 테스트 코드와 함께 바르게 동작함을 확인했습니다. 다음 글에서 몇 가지 기능을 구현하는 방법과 함께 Firestore 보안 규칙 작성기를 마칠 것 같습니다.
 
-[CC BY-SA][cc-by-sa]
+이 글은 [원글][origin]과 마찬가지로 [CC BY-SA][cc-by-sa] 라이센스에 따라 이용할 수 있습니다. 출처를 밝히실 때 [원글][origin]도 꼭 함께 밝혀주세요.
 
+{{ make_service_sleeping_list() }}
+
+[origin]: https://stackoverflow.com/a/59892127
 [cc-by-sa]: https://creativecommons.org/licenses/by-sa/4.0/

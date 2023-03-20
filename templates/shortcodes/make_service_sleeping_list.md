@@ -10,4 +10,6 @@
 
 [Firestore 보안 규칙 작성 시작하기](@/blog/2023-02-04--make-service-sleeping-firestore-security-rules/index.md)
 
+[Firestore 보안 규칙으로 필드 고유성 보장하기](@/blog/2023-03-20--make-service-sleeping-firestore-security-rules-unique-constraint.md)
+
 </section>
