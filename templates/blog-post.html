@@ -18,14 +18,11 @@
 
 {% block page_content %}
 <article
-  class="prose max-w-none prose-h2:flex prose-h3:flex prose-h4:flex prose-h2:items-center prose-h3:items-center prose-h4:items-center break-all sm:break-word"
->
+  class="prose max-w-none prose-h2:flex prose-h3:flex prose-h4:flex prose-h2:items-center prose-h3:items-center prose-h4:items-center break-all sm:break-word">
   <header class="mb-16">
     <h1 class="mb-4">{{ page.title }}</h1>
     <div class="not-prose">
-      <time datetime="{{ page.date }}"
-        >{{ page.date | date(format="%Y년 %-m월 %-d일") }}</time
-      >
+      <time datetime="{{ page.date }}">{{ page.date | date(format="%Y년 %-m월 %-d일") }}</time>
       발행 {% if page.taxonomies %} {{
       macros::render_tags(tags=page.taxonomies.tags, link=true) }} {% endif %}
     </div>
@@ -35,14 +32,11 @@
 </article>
 
 <div class="mt-8">
-  <script
-    src="https://utteranc.es/client.js"
-    repo="jangjunha/comments.jangjunha.me"
-    issue-term="pathname"
-    theme="github-light"
-    crossorigin="anonymous"
-    async
-  ></script>
+  <script src="https://giscus.app/client.js" data-repo="jangjunha/comments.jangjunha.me" data-repo-id="R_kgDOIYEcFQ"
+    data-category="Comments" data-category-id="DIC_kwDOIYEcFc4CU_wr" data-mapping="pathname" data-strict="0"
+    data-reactions-enabled="1" data-emit-metadata="0" data-input-position="bottom" data-theme="light" data-lang="ko"
+    crossorigin="anonymous" async>
+    </script>
 </div>
 {% endblock %}
 
