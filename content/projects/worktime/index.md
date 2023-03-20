@@ -7,6 +7,7 @@ weight = 201900
 [extra]
 year_begin = 2019
 links = [
+    { name="App Store", url="https://apps.apple.com/us/app/worktime-%EA%B7%BC%EB%AC%B4%EC%8B%9C%EA%B0%84/id1479324280" },
     { name="소개페이지", url="https://worktime.heek.kr/" },
     { name="GitHub", url="https://github.com/jangjunha/worktime-ios/" },
 ]
