@@ -14,4 +14,6 @@
 
 [Firestore 보안 규칙 기타 예제](@/blog/2023-11-07--make-service-sleeping-firestore-security-rules-extra.md)
 
+[Firebase 인증에서 자체 인증 서버 사용하기](@/blog/2023-11-07--make-service-sleeping-auth-service.md)
+
 </section>
