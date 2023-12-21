@@ -1,5 +1,7 @@
 {% if not alt %} {% if caption %} {% set alt=caption %} {% endif %} {% endif %}
-<figure class="flex flex-col items-center">
+<figure
+  class="flex flex-col items-center mx-auto{% if class %} {{ class }}{% endif %}"
+>
   <img src="{{ src }}" {% if alt %}alt="{{ alt }}" {% endif %} />
   {% if caption %}
   <figcaption>{{ caption }}</figcaption>
