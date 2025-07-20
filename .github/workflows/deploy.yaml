@@ -2,7 +2,7 @@ name: Deploy
 
 env:
   tailwind_cli_url: 'https://github.com/tailwindlabs/tailwindcss/releases/download/v3.2.1/tailwindcss-linux-x64'
-  zola_cli_url: 'https://github.com/getzola/zola/releases/download/v0.16.1/zola-v0.16.1-x86_64-unknown-linux-gnu.tar.gz'
+  zola_cli_url: 'https://github.com/getzola/zola/releases/download/v0.21.0/zola-v0.21.0-x86_64-unknown-linux-gnu.tar.gz'
 
 on:
   push:
