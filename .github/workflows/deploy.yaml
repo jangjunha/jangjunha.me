@@ -17,12 +17,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
 
       - name: Cache Tailwind CSS
         id: cache-tailwind-css
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: static/assets/tailwind.dist.css
           key: ${{ env.tailwind_cli_url }}-${{ hashFiles('static/assets/tailwind.src.css', 'content/**/*.html', 'content/**/*.md', 'templates/**/*.html') }}
@@ -44,7 +44,7 @@ jobs:
 
       - name: Cache Zola CLI
         id: cache-zola-cli
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /usr/local/bin/zola
           key: '${{ env.zola_cli_url }}'
@@ -62,7 +62,7 @@ jobs:
         run: zola build
 
       - name: Upload built site
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: public
           retention-days: 7
@@ -82,4 +82,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
