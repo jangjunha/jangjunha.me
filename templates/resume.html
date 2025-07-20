@@ -1,6 +1,10 @@
 {% extends "base.html" %} {%- macro render_period(value) %}
 <span class="text-slate-400">{{ value }}</span>
 {%- endmacro render_period %} {% block page_content %}
+<ul class="mb-4 flex justify-end gap-4 [&_a]:underline [&_a]:text-tint-800">
+  <li><a href="/resume/">한국어</a></li>
+  <li><a href="/en/resume/">English</a></li>
+</ul>
 <main class="prose max-w-none">
   <h1>장준하</h1>
 
@@ -127,7 +131,7 @@
   <h2>Activities. Education.</h2>
   <ul>
     <li>
-      <strong>고려대학교 컴퓨터학과</strong> 졸업 예정 {{
+      <strong>고려대학교 컴퓨터학과</strong> 졸업 {{
       self::render_period(value="2016 - 2023.2") }}
     </li>
     <li>

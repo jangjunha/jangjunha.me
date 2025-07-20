@@ -1,5 +1,6 @@
 # The URL the site will be built for
 base_url = "https://jangjunha.me"
+default_language = "ko"
 
 title = "jangjunha"
 
@@ -20,6 +21,10 @@ extra_syntaxes_and_themes = ["syntaxes"]
 
 [slugify]
 anchors = "safe"
+
+[languages.en]
+generate_feeds = true
+build_search_index = true
 
 [extra]
 # Put all your custom variables here

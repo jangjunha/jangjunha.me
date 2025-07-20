@@ -1,0 +1,171 @@
+{% extends "base.html" %} {%- macro render_period(value) %}
+<span class="text-slate-400">{{ value }}</span>
+{%- endmacro render_period %} {% block page_content %}
+<ul class="mb-4 flex justify-end gap-4 [&_a]:underline [&_a]:text-tint-800">
+  <li><a href="/resume/">한국어</a></li>
+  <li><a href="/en/resume/">English</a></li>
+</ul>
+<main class="prose max-w-none">
+  <h1>jangjunha <span class="ml-4">장준하</span></h1>
+
+  <p>
+    I am a software developer who enjoys building things that are useful or fun.
+  </p>
+  <p>
+    I value and enjoy the process of building and delivering products. Technically, I am most comfortable with engineering using Python.
+    I aim to consider more diverse solutions and make better decisions.
+  </p>
+  <p>
+    Recently, I've been interested in learning how to build loosely coupled complicated systems and studying programming language theory.
+  </p>
+
+  <h2>Works.</h2>
+  <ul>
+    <li>
+      <strong>Theori</strong> Software Engineer {{
+      self::render_period(value="2024.1 - now") }}
+
+      <ul>
+        <li>
+          <strong>Xint, On-demand AI hacker</strong>
+          <a
+            href="https://xint.io/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >(Website)</a
+          >
+          <p>Productizes offensive security modules backed by hacker expertise to make them accessible for end users.</p>
+          <p>Builds backend systems that process assets and vulnerabilities discovered in real-time by various modules.</p>
+          <p>Configures and manages infrastructure to enable rapid product improvements.</p>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <strong>스포카</strong> Full-stack Programmer {{
+      self::render_period(value="2018.8 - 2020.9") }}
+
+      <ul>
+        <li>
+          <strong>dodo cart, Cost Management Service for KR Offline Store</strong>
+          <a
+            href="https://kitchenboard.co.kr/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >(Website)</a
+          >
+
+          <p>Analyzes problems faced by internal customers in new business areas and rapidly delivers necessary backoffice products.</p>
+        </li>
+        <li>
+          <strong>dodo point, Royalty Program and Message Marketing Service for KR/JP Offline Store</strong>
+          <a
+            href="https://www.dodopoint.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >(Website)</a
+          >
+
+          <p>Analyzes product metrics to establish OKR and improve the product.</p>
+          <p>Develops necessary new features while stably operating complex, high-traffic systems.</p>
+        </li>
+      </ul>
+    </li>
+    <li>
+      <strong>Frientrip</strong> iOS Software Engineer {{
+      self::render_period(value="2017.10 - 2018.7") }}
+
+      <p>
+        <strong>Frip, Leisure and Activity Platform - iOS Engineering</strong>
+        <a
+          href="https://itunes.apple.com/en/app/%ED%94%84%EB%A6%BD-frip-%EC%95%84%EC%9B%83%EB%8F%84%EC%96%B4-%EC%97%AC%ED%96%89-%ED%94%BC%ED%8A%B8%EB%8B%88%EC%8A%A4-%EB%AC%B8%ED%99%94%EC%83%9D%ED%99%9C/id1066782203?mt=8"
+          target="_blank"
+          rel="noopener noreferrer"
+          >(App Store)</a
+        >
+
+        <ul>
+          <li>Redesign of product ordering and usage system to e-commerce style</li>
+          <li>
+            Maintain iOS Application with <a href="https://github.com/ReactorKit/ReactorKit/tree/3cfec36" target="_blank" rel="noopener noreferrer">RxMVVM</a></li>
+
+          <li>Separate production and test environment apps and automate deployment pipeline</li>
+        </ul>
+      </p>
+    </li>
+    <li>
+      <strong>Nego</strong> Backend Software Engineer {{
+      self::render_period(value="2015.12 - 2016.2") }}
+
+      <p><strong>Nego, E-commerce Lowest Price Change Notification Service</strong></p>
+      <ul>
+        <li>Maintain API server and cralwer and speed improvements through query optimization</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h2>Portfolio.</h2>
+  <ul>
+    <li>
+      <strong>HeekTime, Timetable building application specialized in course searching</strong>
+      <a
+        href="https://itunes.apple.com/mr/app/heektime-hiigtaim/id1134379996"
+        target="_blank"
+        rel="noopener noreferrer"
+        >(App Store)</a>
+      <a
+        href="https://heektime.heek.kr"
+        target="_blank"
+        rel="noopener noreferrer"
+        >(Website)</a>
+      <p>
+        A project focused on user experience during the semester timetable planning process, available as both a website and iOS app.<br />
+        The server was initially written in Flask but recently completed migration to Firebase.
+      </p>
+      <a href="/projects/heektime/">More(ko)..</a>
+    </li>
+  </ul>
+  <p>If you're interested more in my works, please visit the <a href="/projects/">archive(ko)</a> page.</p>
+
+  <h2>Activities. Education.</h2>
+  <ul>
+    <li>
+      Bachelor of Engineering in <strong>Computer Science and Engineering, Korea University</strong> {{
+      self::render_period(value="2016 - 2023.2") }}
+    </li>
+    <li>
+      Graduated <strong>Sunrin Internet High School</strong> {{
+      self::render_period(value="2013 - 2016.2") }}
+    </li>
+    <li>
+      <strong>Samsung Software Membership</strong> Outstanding Graduate Member of the 1st Junior Member {{
+      self::render_period(value="2014") }}
+    </li>
+    <li><strong>Korea Olympiad in Informatics</strong> Competition Division, High School Section, Bronze Medal {{
+      self::render_period(value="2013") }}</li>
+    <li><strong>Korea Olympiad in Informatics</strong> Competition Division, Middle School Section, Silver Medal {{
+      self::render_period(value="2012") }}</li>
+    <li><strong>Korea Olympiad in Informatics</strong> Competition Division, Elementary School Section, Silver Medal {{
+      self::render_period(value="2009") }}</li>
+  </ul>
+
+  <footer class="bg-tint-100 rounded-xl px-8 py-6 mt-16">
+    <strong>Links</strong>
+    <ul>
+      <li>E-mail <a href="mailto:contact@jangjunha.me">contact@jangjunha.me</a></li>
+      <li>
+        GitHub <a href="https://github.com/jangjunha"
+          target="_blank"
+          rel="noopener noreferrer">@jangjunha</a>
+      </li>
+      <li>
+        Linkedin <a
+          href="https://linkedin.com/in/jangjunha"
+          target="_blank"
+          rel="noopener noreferrer"
+          >@jangjunha</a
+        >
+      </li>
+    </ul>
+  </footer>
+</main>
+{% endblock %}
